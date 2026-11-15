@@ -1,0 +1,30 @@
+# Dependências e arquivos gerados
+node_modules/
+.next/
+out/
+target/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+# Configurações locais e credenciais
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Contexto e instruções locais dos agentes
+context.md
+[Cc][Oo][Nn][Tt][Ee][Xx][Tt].md
+[Aa][Gg][Ee][Nn][Tt][Ss].md
+.agents/
+.codex/
+.aws/
+
+# IDEs, sistema e logs
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+*.log
