@@ -1,143 +1,263 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-export const stations = {
-  client: ['Cliente', 22, 65, 'Envio o pedido de cadastro.', 'Inicia a requisição HTTP.', 'Envia método, rota, cabeçalhos e corpo ao endpoint.'],
-  controller: ['Controller', 36, 49, 'Recebo o formulário do cliente.', 'Recebe os dados do pedido.', 'Mapeia a rota HTTP para um método Java.'],
-  service: ['Service', 54, 37, 'Confiro as regras do cadastro.', 'Verifica as regras do produto.', 'Valida o domínio antes de chamar a persistência.'],
-  entity: ['Entity', 56, 70, 'Carrego os dados do produto.', 'Guarda os atributos do produto.', 'Representa a entidade mapeada para a tabela.'],
-  repository: ['Repository', 72, 55, 'Peço a gravação do produto.', 'Encaminha o produto para gravar.', 'Abstrai o acesso ao armazenamento.'],
-  database: ['Banco', 82, 38, 'Armazeno os registros.', 'Mantém os produtos cadastrados.', 'Representa a persistência dos registros em tabela.']
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  handoffDuration, handoffFrame, people, planHandoff, roomHeight, roomWidth, sceneTime, seatedRoles, stationPoint, stations
+} from './room-motion.mjs';
+
+const legBounds = {
+  'ana-elisa': [.485, .60],
+  'carlos-vinicius': [.484, .62],
+  'luca-maia': [.484, .608],
+  'pedro-fernandes': [.46, .64]
 };
-function draw(ctx, active, t) {
-  const W = 440,
-    H = 232;
-  ctx.clearRect(0, 0, W, H);
-  const rect = (x, y, w, h, c) => {
-    ctx.fillStyle = c;
-    ctx.fillRect(Math.round(x), Math.round(y), w, h);
-  };
-  const poly = (pts, c) => {
-    ctx.fillStyle = c;
-    ctx.beginPath();
-    pts.forEach(([x, y], i) => i ? ctx.lineTo(x, y) : ctx.moveTo(x, y));
-    ctx.closePath();
-    ctx.fill();
-  };
-  const iso = (x, y) => [207 + 15 * x - 14 * y, 21 + 7 * x + 7 * y];
-  function box(x, y, w, d, h, top, left, right) {
-    const a = iso(x, y),
-      b = iso(x + w, y),
-      c = iso(x + w, y + d),
-      e = iso(x, y + d);
-    const up = p => [p[0], p[1] - h];
-    poly([up(a), up(b), up(c), up(e)], top);
-    poly([up(e), up(c), c, e], left);
-    poly([up(c), up(b), b, c], right);
-  }
-  // Tiled cutaway floor and two low walls.
-  for (let x = 0; x < 14; x++) for (let y = 0; y < 13; y++) box(x, y, 1, 1, 4, (x + y) % 2 ? '#c1dbce' : '#c9e1d5', '#74988c', '#658a80');
-  for (let x = 0; x < 14; x++) box(x, 0, 1, .32, 19, '#eef4df', '#a8c8b7', '#759686');
-  for (let y = 0; y < 13; y++) box(0, y, .32, 1, 19, '#f3f3dd', '#9bb9a5', '#b2cebb');
-  function plant(x, y) {
-    rect(x - 4, y - 6, 9, 7, '#a06446');
-    rect(x - 5, y - 7, 11, 3, '#d58c62');
-    rect(x, y - 18, 2, 12, '#386444');
-    rect(x - 7, y - 15, 7, 5, '#4d9363');
-    rect(x + 2, y - 19, 6, 6, '#579e65');
-    rect(x - 4, y - 23, 5, 8, '#2c7951');
-  }
-  plant(43, 110);
-  plant(212, 22);
-  plant(391, 113);
-  plant(204, 191);
-  // Workbenches with monitors.
-  for (const [x, y] of [[4, 8], [6, 4], [10, 6]]) {
-    box(x, y, 2, .9, 9, '#bf9068', '#8d6149', '#735542');
-    let [a, b] = iso(x + .65, y + .45);
-    rect(a - 3, b - 17, 8, 2, '#49575a');
-    rect(a, b - 19, 2, 3, '#49575a');
-    rect(a - 5, b - 27, 13, 9, '#394f53');
-    rect(a - 4, b - 26, 11, 6, '#93d9c0');
-    rect(a - 3, b - 25, 5, 1, '#518f80');
-    rect(a - 3, b - 23, 8, 1, '#518f80');
-  }
-  Object.entries(stations).sort((a, b) => a[1][2 + 0] - b[1][2 + 0]).forEach(([id, [, xp, yp]], idx) => {
-    const x = Math.round(xp * W / 100),
-      y = Math.round(yp * H / 100);
-    if (active === id) {
-      poly([[x - 13, y - 1], [x, y - 7], [x + 13, y - 1], [x, y + 5]], '#efc44b');
-    }
-    if (id === 'database') {
-      for (let n = 0; n < 3; n++) {
-        rect(x - 9, y - 8 - n * 7, 18, 6, '#50646a');
-        rect(x - 8, y - 7 - n * 7, 13, 3, '#81989a');
-        rect(x + 6, y - 7 - n * 7, 2, 2, '#b9f194');
-      }
-    } else if (id === 'entity') {
-      rect(x - 8, y - 14, 15, 14, '#bd8a58');
-      rect(x - 6, y - 16, 13, 14, '#ffe3a0');
-      rect(x - 4, y - 13, 8, 2, '#9f743a');
-      rect(x - 4, y - 9, 6, 1, '#9f743a');
-    } else {
-      let bob = active === id && Math.sin(t / 260) > .6 ? -1 : 0;
-      const skin = ['#dba77f', '#a87153', '#e8bc94', '#c58f70'][idx % 4],
-        hair = ['#453b39', '#643e36', '#393946', '#855338'][idx % 4];
-      const shirt = {
-        client: '#cd794e',
-        service: '#4f8d65',
-        repository: '#5c81ab',
-        controller: '#9379b2'
-      }[id];
-      rect(x - 5, y - 7, 4, 7, '#384859');
-      rect(x + 1, y - 7, 4, 7, '#344355');
-      rect(x - 6, y - 1, 5, 2, '#453f43');
-      rect(x + 1, y - 1, 6, 2, '#453f43');
-      rect(x - 6, y - 17 + bob, 12, 10, shirt);
-      rect(x - 8, y - 15 + bob, 3, 8, skin);
-      rect(x + 5, y - 15 + bob, 3, 8, skin);
-      rect(x - 5, y - 28 + bob, 11, 12, skin);
-      rect(x - 6, y - 29 + bob, 12, 5, hair);
-      rect(x - 6, y - 26 + bob, 3, 6, hair);
-      rect(x + 2, y - 23 + bob, 2, 2, '#37373a');
-    }
-  });
+
+// Contornos da mesa e dos monitores na imagem de fundo original (1774 × 887).
+const deskForeground = [
+  [[1445, 512], [1583, 331], [1687, 344], [1540, 543], [1445, 531]],
+  [[1497, 456], [1537, 425], [1540, 480], [1497, 510]],
+  [[1552, 391], [1592, 361], [1595, 417], [1552, 447]],
+  [[1606, 326], [1644, 294], [1647, 348], [1606, 377]]
+];
+
+const roundTableForeground = [
+  [[1106, 551], [1122, 524], [1172, 507], [1240, 500], [1294, 500],
+    [1350, 510], [1394, 528], [1419, 549], [1415, 568], [1392, 590],
+    [1351, 609], [1295, 618], [1230, 616], [1174, 606], [1131, 587], [1107, 565]]
+];
+
+/** Dobra e encurta as pernas em duas partes, conservando o tronco e os pés apoiados. */
+function drawSeatedPose(ctx, image, left, top, size, sitting) {
+  const pixels = image.naturalWidth;
+  const scale = size / pixels;
+  const hip = Math.round(.65 * pixels);
+  const knee = Math.round(.81 * pixels);
+  const thighHeight = (knee - hip) * scale;
+  const calfHeight = (pixels - knee) * scale;
+  const thigh = thighHeight * (1 - .65 * sitting);
+  const calf = calfHeight * (1 - .37 * sitting);
+  const shoulderTop = top + thighHeight + calfHeight - thigh - calf;
+  const seatTop = shoulderTop + hip * scale;
+  ctx.drawImage(image, 0, 0, pixels, hip, left, shoulderTop, size, hip * scale);
+  ctx.save();
+  ctx.translate(left, seatTop);
+  ctx.transform(1, 0, .9 * sitting, 1, 0, 0);
+  ctx.drawImage(image, 0, hip, pixels, knee - hip, 0, 0, size, thigh);
+  ctx.restore();
+  ctx.drawImage(image, 0, knee, pixels, pixels - knee, left + .9 * sitting * thigh, seatTop + thigh, size, calf);
 }
-export default function Room({
-  active,
-  playing,
-  onInspect,
-  bubble,
-  previous,
-  index
-}) {
+
+/** Simula passos alternados nas pernas sem deformar o torso, os acessórios ou os animais. */
+function drawSprite(ctx, image, { person, x, y, stride, direction, sitting }) {
+  const size = 99 + Math.round((y - roomHeight / 2) * .10);
+  const top = -Math.round(size * .965);
+  const left = -Math.round(size * person.anchor);
+  ctx.save();
+  ctx.translate(Math.round(x), Math.round(y - Math.abs(stride) * 2));
+  if (direction < 0 && person.id !== 'andre') ctx.scale(-1, 1);
+
+  if (sitting > 0) {
+    drawSeatedPose(ctx, image, left, top, size, sitting);
+  } else if (!stride) {
+    ctx.drawImage(image, left, top, size, size);
+  } else {
+    const pixels = image.naturalWidth;
+    const scale = size / pixels;
+    const knee = Math.round(pixels * .84);
+    const start = Math.round(pixels * .35);
+    const [midpoint, endPoint] = legBounds[person.id] || [.484, .64];
+    const middle = Math.round(pixels * midpoint);
+    const end = Math.round(pixels * endPoint);
+    const remaining = pixels - knee;
+    const bottom = top + knee * scale;
+    ctx.drawImage(image, 0, 0, pixels, knee, left, top, size, knee * scale);
+    ctx.drawImage(image, 0, knee, start, remaining, left, bottom, start * scale, remaining * scale);
+    ctx.drawImage(image, end, knee, pixels - end, remaining, left + end * scale, bottom, (pixels - end) * scale, remaining * scale);
+
+    for (const [edge, next, swing] of [[start, middle, stride], [middle, end, -stride]]) {
+      const columnWidth = next - edge;
+      ctx.save();
+      ctx.translate(left + edge * scale, bottom);
+      ctx.transform(1, 0, swing * .26, 1 - Math.max(0, swing) * .16, 0, 0);
+      ctx.drawImage(image, edge, knee, columnWidth, remaining, 0, 0, columnWidth * scale, remaining * scale);
+      ctx.restore();
+    }
+  }
+  ctx.restore();
+}
+
+/** Recompõe o mobiliário que fica à frente dos personagens no plano da sala. */
+function drawForeground(ctx, background, outlines) {
+  ctx.save();
+  ctx.scale(roomWidth / background.naturalWidth, roomHeight / background.naturalHeight);
+  ctx.beginPath();
+  for (const outline of outlines) {
+    ctx.moveTo(...outline[0]);
+    for (const point of outline.slice(1)) ctx.lineTo(...point);
+    ctx.closePath();
+  }
+  ctx.clip();
+  ctx.drawImage(background, 0, 0);
+  ctx.restore();
+}
+
+/** Desenha um envelope durante a entrega, interpolado entre os dois atores. */
+function drawEnvelope(ctx, motion, target, receiverSeated) {
+  const ratio = motion.envelope;
+  const x = Math.round(motion.x + (target[0] - motion.x) * ratio);
+  const y = Math.round(motion.y + (target[1] - motion.y) * ratio - 42 +
+    (receiverSeated ? 14 * ratio : 0) - Math.sin(ratio * Math.PI) * 12);
+  ctx.fillStyle = '#67461c';
+  ctx.fillRect(x - 12, y - 8, 24, 16);
+  ctx.fillStyle = '#ffd579';
+  ctx.fillRect(x - 10, y - 6, 20, 12);
+  ctx.beginPath();
+  ctx.moveTo(x - 9, y - 5);
+  ctx.lineTo(x, y + 1);
+  ctx.lineTo(x + 9, y - 5);
+  ctx.strokeStyle = '#956527';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+}
+
+/** Compõe os sprites sobre o fundo, desenhando os personagens mais próximos por último. */
+function drawRoom(ctx, actors, images, active, handoff, elapsed) {
+  ctx.clearRect(0, 0, roomWidth, roomHeight);
+  ctx.imageSmoothingEnabled = false;
+  const motion = handoffFrame(handoff, elapsed);
+  const positions = actors.map(actor => motion && actor.role === handoff.sender
+    ? { ...actor, ...motion }
+    : actor).sort((a, b) => a.y - b.y);
+
+  for (const actor of positions) {
+    const { role, x, y } = actor;
+    ctx.beginPath();
+    ctx.ellipse(x, y, role === active ? 23 : 14, role === active ? 8 : 5, 0, 0, Math.PI * 2);
+    ctx.fillStyle = role === active ? '#f0b43f' : '#42342430';
+    ctx.fill();
+  }
+
+  if (images.racks) {
+    // Os gabinetes ficam sob o quadro e ao lado da estação do Banco.
+    ctx.drawImage(images.racks, 531, 151, 72, 74);
+  }
+
+  for (const actor of positions) {
+    const image = images[actor.person.id];
+    if (image) drawSprite(ctx, image, actor);
+    if (actor.role === 'entity') {
+      if (images.background) drawForeground(ctx, images.background, roundTableForeground);
+      if (images.laptop) {
+        const width = 42;
+        const height = Math.round(width * images.laptop.naturalHeight / images.laptop.naturalWidth);
+        ctx.drawImage(images.laptop, 572, 282 - height, width, height);
+      }
+    }
+  }
+  if (images.background) drawForeground(ctx, images.background, deskForeground);
+
+  if (motion?.envelope != null) drawEnvelope(ctx, motion, handoff.target, seatedRoles.has(active));
+}
+
+/** Exibe o elenco e mantém a animação e a inspeção sincronizadas com a etapa atual. */
+export default function Room({ active, playing, onInspect, bubble, previous, cast, clock }) {
   const canvas = useRef(null);
+  const viewport = useRef(null);
+  const [images, setImages] = useState({});
+  const actors = useMemo(() => Object.entries(cast).map(([role, person]) => {
+    const [x, y] = stationPoint(role);
+    return { role, person, x, y, stride: 0, direction: 1, sitting: seatedRoles.has(role) ? 1 : 0 };
+  }), [cast]);
+  const handoff = useMemo(() => planHandoff(previous, active), [previous, active]);
+  const [, x, y] = stations[active];
+
+  useEffect(() => {
+    let mounted = true;
+    const sources = [
+      ...people.map(({ id }) => [id, `/scenarios/people/${id}.webp`]),
+      ['racks', '/scenarios/data-center.webp'],
+      ['laptop', '/scenarios/round-table-laptop.webp'],
+      ['background', '/scenarios/nara-lab-room.png']
+    ];
+    Promise.all(sources.map(async ([id, src]) => {
+      const image = new Image();
+      image.src = src;
+      try {
+        await image.decode();
+        return [id, image];
+      } catch {
+        return [id, null];
+      }
+    })).then(entries => {
+      if (mounted) setImages(Object.fromEntries(entries));
+    });
+    return () => { mounted = false; };
+  }, []);
+
+  useEffect(() => {
+    const container = viewport.current;
+    const sceneWidth = canvas.current.clientWidth;
+    const margin = Math.min(80, container.clientWidth / 4);
+    const target = x * sceneWidth / 100;
+    if (target < container.scrollLeft + margin || target > container.scrollLeft + container.clientWidth - margin) {
+      container.scrollLeft = target - container.clientWidth / 2;
+    }
+  }, [x]);
+
   useEffect(() => {
     const ctx = canvas.current.getContext('2d');
-    let handle;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const frame = t => {
-      draw(ctx, active, t);
-      if (playing && !reduced) handle = requestAnimationFrame(frame);
+    if (!ctx) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let frame;
+
+    const render = () => {
+      const elapsed = sceneTime(clock);
+      drawRoom(ctx, actors, images, active, reduced.matches ? null : handoff, elapsed);
+      if (playing && !reduced.matches && handoff && elapsed < handoffDuration) {
+        frame = requestAnimationFrame(render);
+      }
     };
-    frame(0);
-    return () => cancelAnimationFrame(handle);
-  }, [active, playing]);
-  const current = stations[active],
-    from = stations[previous];
-  return <div className="room"><canvas width="440" height="232" ref={canvas} aria-hidden="true" />
- {Object.entries(stations).map(([id, [title, x, y]]) => <button className={'station ' + (active === id ? 'selected' : '')} key={id} onClick={() => onInspect(id)} style={{
-      left: x + '%',
-      top: y + '%'
-    }}>{title}</button>)}
- {from && current && from !== current && <i key={index} aria-hidden="true" className="packet" style={{
-      "--from-x": from[1] + "%",
-      "--from-y": from[2] - 8 + "%",
-      "--to-x": current[1] + "%",
-      "--to-y": current[2] - 8 + "%"
-    }}>✉</i>}
- {bubble && current && <div className="bubble" style={{
-      left: Math.max(19, Math.min(80, current[1])) + '%',
-      bottom: 100 - current[2] + 14 + '%'
-    }}>{bubble}</div>}</div>;
+
+    const refresh = () => {
+      cancelAnimationFrame(frame);
+      render();
+    };
+
+    refresh();
+    reduced.addEventListener('change', refresh);
+    return () => {
+      cancelAnimationFrame(frame);
+      reduced.removeEventListener('change', refresh);
+    };
+  }, [active, actors, clock, handoff, images, playing]);
+
+  return (
+    <>
+      <p className="room-scroll-hint">Deslize para explorar toda a sala.</p>
+      <div className="room-viewport" ref={viewport} tabIndex={0} role="region" aria-label="Mapa da sala de simulação">
+        <div className="room">
+          <canvas width={roomWidth} height={roomHeight} ref={canvas} aria-hidden="true" />
+          {Object.entries(stations).map(([id, [title, left, top]]) => (
+            <button
+              type="button"
+              key={id}
+              className={`station${active === id ? ' selected' : ''}`}
+              aria-pressed={active === id}
+              title={cast[id].name}
+              data-character={cast[id].id}
+              onClick={() => onInspect(id)}
+              style={{ left: `${id === 'entity' ? 58 : left}%`, top: `${top}%` }}
+            >
+              {title}
+            </button>
+          ))}
+          {bubble && (
+            <div className="bubble" style={{ left: `${Math.min(x, 78)}%`, bottom: `${100 - y + (seatedRoles.has(active) ? 18 : 24)}%` }}>
+              {bubble}
+            </div>
+          )}
+        </div>
+      </div>
+    </>
+  );
 }

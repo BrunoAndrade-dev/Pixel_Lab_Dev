@@ -13,9 +13,9 @@ next-env.d.ts
 !.env.example
 !.env.*.example
 
-# Contexto e instruções locais dos agentes
-context.md
+# Contexto local e instruções dos agentes
 [Cc][Oo][Nn][Tt][Ee][Xx][Tt].md
+!/context.md
 [Aa][Gg][Ee][Nn][Tt][Ss].md
 .agents/
 .codex/

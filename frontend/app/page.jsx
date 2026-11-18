@@ -1,191 +1,60 @@
-'use client';
+import Image from 'next/image';
+import Link from 'next/link';
+import SiteHeader from './site-header';
+import TechnologyScene from './technology-scene';
+import './landing.css';
 
-import { useEffect, useState } from 'react';
-import Room, { stations } from './room';
-const presets = [{
-  name: 'Cadastro válido',
-  description: 'Acompanhe a criação de um produto.',
-  status: '201',
-  price: 89.9,
-  failure: 'none'
-}, {
-  name: 'Preço inválido',
-  description: 'Veja onde a regra de negócio interrompe o fluxo.',
-  status: '400',
-  price: -1,
-  failure: 'none'
-}, {
-  name: 'Banco indisponível',
-  description: 'Observe uma falha na persistência.',
-  status: '503',
-  price: 89.9,
-  failure: 'database-unavailable'
-}];
-const initial = {
-  name: 'Teclado',
-  price: '89.90',
-  failure: 'none',
-  level: 'basic',
-  speed: '1'
-};
-const key = 'pixel-lab.settings.v1';
-const pretty = value => JSON.stringify(value, null, 2);
-export default function Page() {
-  const [catalog, setCatalog] = useState(null),
-    [catalogError, setCatalogError] = useState(false),
-    [attempt, setAttempt] = useState(0);
-  useEffect(() => {
-    let alive = true;
-    setCatalogError(false);
-    fetch('/api/scenarios').then(r => {
-      if (!r.ok) throw Error();
-      return r.json();
-    }).then(items => {
-      if (alive) setCatalog(items);
-    }).catch(() => {
-      if (alive) setCatalogError(true);
-    });
-    return () => {
-      alive = false;
-    };
-  }, [attempt]);
-  const [config, setConfig] = useState(initial),
-    [tab, setTab] = useState('Sala'),
-    [side, setSide] = useState('Entrada'),
-    [detail, setDetail] = useState('HTTP');
-  const [result, setResult] = useState(null),
-    [pos, setPos] = useState(0),
-    [play, setPlay] = useState(false),
-    [inspect, setInspect] = useState(null);
-  const [busy, setBusy] = useState(false),
-    [error, setError] = useState(''),
-    [notice, setNotice] = useState(''),
-    [sent, setSent] = useState(null);
-  useEffect(() => {
-    try {
-      let s = JSON.parse(localStorage.getItem(key));
-      if (s) setConfig({
-        ...initial,
-        ...s
-      });
-    } catch {}
-  }, []);
-  const update = (k, v) => {
-    setConfig(o => ({
-      ...o,
-      [k]: v
-    }));
-    setNotice('');
-  };
-  const steps = result?.steps || [],
-    step = steps[pos],
-    last = pos === steps.length - 1;
-  useEffect(() => {
-    if (!play || !steps.length) return;
-    if (last) {
-      setPlay(false);
-      return;
-    }
-    const id = setTimeout(() => {
-      setPos(i => i + 1);
-      setInspect(null);
-    }, 3500 / Number(config.speed));
-    return () => clearTimeout(id);
-  }, [play, pos, last, steps.length, config.speed]);
-  const actor = inspect || step?.actor || 'client',
-    station = stations[actor] || stations.client;
-  const bubble = inspect ? station[3] : step?.bubble;
-  const caption = inspect ? station[config.level === 'basic' ? 4 : 5] : step?.caption?.[config.level] || 'Configure a entrada e execute o exemplo para acompanhar o pedido.';
-  function jump(n) {
-    setPlay(false);
-    setInspect(null);
-    setPos(Math.min(Math.max(0, n), steps.length - 1));
-  }
-  async function run(e) {
-    e.preventDefault();
-    if (busy) return;
-    setBusy(true);
-    setPlay(false);
-    setError('');
-    setNotice('');
-    const inputs = {
-      name: config.name,
-      price: Number(config.price)
-    };
-    try {
-      const r = await fetch('/api/simulations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          scenario: 'create-product',
-          inputs,
-          failure: config.failure
-        })
-      });
-      if (!r.ok) throw new Error();
-      const data = await r.json();
-      if (!data.steps?.length) throw new Error();
-      setResult(data);
-      setSent(inputs);
-      setInspect(null);
-      setPos(0);
-      setPlay(true);
-      setTab('Sala');
-    } catch {
-      setError('Não foi possível iniciar a simulação. Confira se o backend Spring Boot está disponível e tente novamente.');
-    } finally {
-      setBusy(false);
-    }
-  }
-  function save() {
-    try {
-      localStorage.setItem(key, JSON.stringify(config));
-      setNotice('Configuração salva neste navegador.');
-    } catch {
-      setNotice('Não foi possível salvar neste navegador.');
-    }
-  }
-  function choose(p) {
-    setConfig(c => ({
-      ...c,
-      price: String(p.price),
-      failure: p.failure
-    }));
-    setTab('Sala');
-    setPlay(false);
-    setPos(0);
-    setInspect(null);
-    setResult(null);
-    setSent(null);
-    setError('');
-    setSide(p.failure === 'none' ? 'Entrada' : 'Falhas');
-    setNotice('Exemplo carregado. Clique em Executar.');
-  }
-  return <><header><div className="brand"><i>▦</i> Pixel Lab</div><nav>{['Sala', 'Catálogo'].map(t => <button aria-current={tab === t ? 'page' : undefined} onClick={() => setTab(t)} key={t}>{t}</button>)}</nav><span className="tech">JAVA / SPRING BOOT</span></header>
- <main>{tab === 'Catálogo' ? <><div className="intro"><p>Biblioteca de exemplos</p><h1>Catálogo</h1></div>{catalogError ? <p role="alert">Catálogo indisponível. <button onClick={() => setAttempt(a => a + 1)}>Tentar novamente</button></p> : !catalog ? <p>Carregando exemplos…</p> : catalog.some(s => s.id === 'create-product') ? <><h2>{catalog.find(s => s.id === 'create-product').title}</h2><p>Escolha o cenário da requisição.</p><div className="cards">{presets.map(p => <button className="card" key={p.name} onClick={() => choose(p)}><small>POST /produtos</small><strong>{p.name}</strong><span>{p.description}</span><b>HTTP {p.status} ↗</b></button>)}</div></> : <p>Nenhum exemplo disponível.</p>}</> : <>
- <div className="intro"><p>Spring Boot <span>/</span> APIs e requisições HTTP</p><h1>Cadastro de produtos</h1><div>Explore o caminho de uma requisição, do cliente ao banco de dados.</div></div>
- <div className="grid"><section className="stage"><div className="bar"><h2>Sala de simulação</h2><span className="status"><i />{busy ? 'Carregando' : play ? 'Reproduzindo' : result ? 'Em revisão' : 'Pronta'}</span></div>
- <Room previous={inspect ? null : steps[pos - 1]?.actor} index={pos} active={actor} playing={play} bubble={bubble} onInspect={a => {
-              setInspect(a);
-              setPlay(false);
-            }} />
- <div className="caption" aria-live="polite"><small>{station[0]} <em> / </em> {config.level === 'basic' ? 'Iniciante' : 'Técnico'}</small><p>{caption}</p></div>
- <div className="playbar"><button disabled={!result} onClick={() => jump(0)} aria-label="Reiniciar" title="Reiniciar">↺</button><button disabled={!result || pos === 0} onClick={() => jump(pos - 1)} aria-label="Etapa anterior" title="Etapa anterior">◀</button>
- <button className="play" disabled={!result} onClick={() => {
-                if (last) setPos(0);
-                setInspect(null);
-                setPlay(!play);
-              }} aria-label={play ? 'Pausar' : 'Reproduzir'}>{play ? 'Ⅱ' : '▶'}</button>
- <button disabled={!result || last} onClick={() => jump(pos + 1)} aria-label="Próxima etapa" title="Próxima etapa">▶</button><small>{result ? pos + 1 : 0} / {steps.length}</small><label>Velocidade <select value={config.speed} onChange={e => update('speed', e.target.value)}>{['0.5', '1', '1.5', '2'].map(x => <option value={x} key={x}>{x}×</option>)}</select></label></div></section>
- <aside><div className="bar"><h2>Configuração</h2></div><form onSubmit={run}><div className="tabs">{['Entrada', 'Falhas'].map(t => <button key={t} type="button" aria-pressed={side === t} onClick={() => setSide(t)}>{t}</button>)}</div>
- {side === 'Entrada' ? <><label>Nome do produto<input value={config.name} onChange={e => update('name', e.target.value)} /></label><label>Preço (R$)<input type="number" step="any" required value={config.price} onChange={e => update('price', e.target.value)} /></label></> : <label>Falha simulada<select value={config.failure} onChange={e => update('failure', e.target.value)}><option value="none">Nenhuma</option><option value="database-unavailable">Banco indisponível</option></select></label>}
- <label>Nível da legenda<select value={config.level} onChange={e => update('level', e.target.value)}><option value="basic">Iniciante</option><option value="technical">Técnico</option></select></label>
- <button className="primary" disabled={busy}>{busy ? 'Iniciando…' : '▶  Executar exemplo'}</button><button className="save" type="button" onClick={save}>Salvar configuração</button>{(error || notice) && <p role="status" className="notice">{error || notice}</p>}</form></aside></div>
- <section className="inspector"><div className="bar"><h2>Inspetor</h2><div className="tabs">{['HTTP', 'Código', 'Estado', 'Histórico'].map(t => <button key={t} aria-pressed={detail === t} onClick={() => setDetail(t)}>{t}</button>)}</div></div>
- {detail === 'HTTP' ? <div className="split"><div><small>REQUISIÇÃO</small><h3><b>POST</b> /produtos</h3><pre>{pretty(sent || {
-                  name: config.name,
-                  price: Number(config.price)
-                })}</pre></div><div><small>RESPOSTA SIMULADA</small><h3>{result && last ? 'HTTP ' + result.simulatedResponse.status : 'Aguardando resposta'}</h3><pre>{result && last ? pretty(result.simulatedResponse.body) : 'A resposta aparece ao final do fluxo.'}</pre></div></div> : detail === 'Código' ? <div className="readout"><small>{step?.code?.file || 'Código Java'}</small>{step?.code ? <pre>{step.code.source.split('\n').map((l, i) => <div className={step.code.line === i + 1 ? 'current' : ''} key={i}>{String(i + 1).padStart(2, ' ')}  {l || ' '}</div>)}</pre> : <p>Esta etapa não possui trecho Java associado.</p>}</div> : detail === 'Estado' ? <pre className="readout">{step ? pretty(step.state) : 'Execute o exemplo para inspecionar os dados.'}</pre> : <div className="readout">{steps.length ? <ol>{steps.slice(0, pos + 1).map((s, i) => <li key={i}><button onClick={() => jump(i)}>{stations[s.actor]?.[0] || s.actor} · {s.bubble}</button></li>)}</ol> : 'O histórico será preenchido durante a execução.'}</div>}</section></>}</main></>;
+const modules = [
+  'Lógica de Programação',
+  'Frontend',
+  'Backend',
+  'Banco de Dados',
+  'Arquitetura',
+  'Agentes de IA',
+  'DevOps',
+  'Metodologias Ágeis',
+];
+
+const topics = ['Java', 'Spring Boot', 'Requisições HTTP', 'APIs'];
+
+/** Exibe a introdução e mantém um caminho direto entre o catálogo e a simulação disponível. */
+export default function LandingPage() {
+  return (
+    <main className="landing" id="inicio">
+      <SiteHeader current="home" />
+
+      <section className="landing-hero" aria-labelledby="landing-title">
+        <TechnologyScene />
+        <div className="hero-copy">
+          <h1 id="landing-title">
+            Desbloqueie seu<br /> potencial em<br /> <span>programação.</span>
+          </h1>
+          <p>Aprenda na prática com simulações interativas e animações 2D.</p>
+        </div>
+      </section>
+
+      <section className="module-section" id="modulos" tabIndex={-1} aria-labelledby="modules-title">
+        <h2 id="modules-title">Módulos</h2>
+        <ul className="module-grid">
+          {modules.map(name => (
+            <li key={name} className={name === 'Backend' ? 'module-backend' : 'module-item'}>
+              <h3>{name}</h3>
+              {name === 'Backend' && (
+                <Link className="scenario-card" href="/modulos/backend/cadastro-de-produtos">
+                  <div className="scenario-copy">
+                    <p className="scenario-framework">Framework Spring Boot</p>
+                    <h4>Cenário — Cadastro de Produtos</h4>
+                    <ul className="scenario-topics" aria-label="Tópicos da simulação">
+                      {topics.map(topic => <li key={topic}>{topic}</li>)}
+                    </ul>
+                  </div>
+                  <Image className="scenario-illustration" src="/technologies/spring-boot.png" alt="" width={138} height={138} unoptimized />
+                </Link>
+              )}
+            </li>
+          ))}
+        </ul>
+      </section>
+    </main>
+  );
 }

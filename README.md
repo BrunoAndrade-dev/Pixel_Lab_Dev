@@ -1,40 +1,68 @@
-# Laboratório visual Java e Spring Boot
+# NARA Lab
 
-Plataforma de demonstrações configuráveis para uso em computador e projetor. O primeiro exemplo acompanha um cadastro de produto, da requisição HTTP até a resposta. Controller recebe a requisição, Service aplica a regra, a entidade representa o produto e Repository cuida da persistência simulada.
+O NARA Lab é uma plataforma educativa de simulações interativas. Em uma sala isométrica em pixel art, personagens representam componentes de um sistema para ajudar professores e estudantes a relacionar o que acontece em cada etapa com o código, os dados e o resultado da operação.
 
-## Stacks utilizadas
+## O que a plataforma contempla
+
+- Página inicial responsiva com ícones animados, catálogo por áreas e uma aba **Como funciona** com a proposta didática e orientações para a primeira demonstração.
+- Módulo **Backend** com o cenário **Cadastro de Produtos**, que acompanha um `POST /produtos` simulado no Spring Boot. Cliente, Controller, Service, Entity, Repository e Banco têm papéis identificáveis na sala.
+- Laboratório em pixel art inspirado na sala real, com estações de trabalho, data center e dez sprites da equipe. Cada execução sorteia seis integrantes distintos, um por papel. Os personagens caminham para entregar o envelope, e Service, Repository e Entity têm postos sentados.
+- Configuração de nome, preço, falha simulada, nível da legenda e velocidade. As preferências podem ser salvas no navegador.
+- Controles para reproduzir, pausar, retomar, avançar, voltar e reiniciar. O inspetor mostra requisição e resposta HTTP, código Java, estado e histórico da etapa selecionada.
+
+### Cenários disponíveis
+
+| Cenário | Resposta simulada | Estado dos registros |
+| --- | --- | --- |
+| Nome preenchido e preço positivo | `201 Created` | Um produto cadastrado |
+| Nome em branco ou preço zero/negativo | `400 Bad Request` | Nenhum produto cadastrado |
+| Entrada válida e banco indisponível | `503 Service Unavailable` | Nenhum produto cadastrado |
+
+Cada execução começa com registros vazios. O armazenamento é simulado em memória durante a demonstração.
+
+## Tecnologias
 
 | Parte | Tecnologias |
-|---|---|
-| Backend | Java 21, Spring Boot 3.5.16 e Spring Web MVC |
-| Frontend | Next.js 16.2.6, React 19.2.6 e JavaScript com JSX |
-| Interface e animações | CSS e Canvas 2D do navegador |
-| Comunicação | API HTTP com dados em JSON |
-| Build e dependências | Maven e npm |
-| Testes do backend | JUnit 5 e MockMvc, via Spring Boot Starter Test |
-| Configurações do professor | localStorage do navegador |
+| --- | --- |
+| Backend | Java 21, Spring Boot 3.5.16, Spring Web MVC e Maven |
+| Frontend | Next.js 16.2.6, React 19.2.6, JavaScript com JSX, CSS e Canvas 2D |
+| Comunicação | HTTP e JSON |
+| Testes do backend | JUnit 5 e MockMvc |
+| Preferências locais | `localStorage` |
 
-Os registros de produtos são simulados em memória durante cada demonstração.
+## Executar localmente
 
-## Executar no computador
+Em um terminal, com JDK 21 e Maven:
 
-Abra dois terminais na raiz do projeto. No primeiro, com JDK 21 e Maven instalados:
-
-```sh
+~~~sh
 cd backend
 mvn spring-boot:run
-```
+~~~
 
-No segundo, com Node.js 22.12 ou superior e npm instalados:
+Em outro terminal, com Node.js 22.12 ou superior e npm:
 
-```sh
+~~~sh
 cd frontend
-npm install
+npm ci
 npm run dev
-```
+~~~
 
-Abra http://localhost:3000 no navegador com o backend em execução na porta 8080.
+Acesse [NARA Lab em localhost:3000](http://localhost:3000), abra **Acessar módulos** e selecione **Backend → Cadastro de Produtos**. O Next.js encaminha as chamadas da API para o Spring em `http://127.0.0.1:8080` por padrão. Para outro endereço, defina a variável `SPRING_API_URL` no frontend.
 
-## Demonstrar
+Para verificar o projeto, execute `mvn test` em `backend/` e `npm run build` em `frontend/`.
 
-Comece com nome preenchido e preço positivo. Pause na validação e acompanhe a legenda, o código e os dados antes de avançar. Repita com preço inválido para verificar em qual camada o fluxo termina. Depois, use preço válido e ative a indisponibilidade do banco na aba de falhas. Compare o estado dos registros e o status HTTP da API representada nos três casos.
+## Passos futuros
+
+O catálogo já exibe as áreas abaixo. Os conteúdos indicados são propostas iniciais para as próximas implementações.
+
+| Módulo a implementar | Primeiro cenário proposto |
+| --- | --- |
+| Lógica de Programação | Percorrer condicionais e laços, observando o valor das variáveis a cada passo |
+| Frontend | Acompanhar eventos de formulário, validação e atualização da interface |
+| Banco de Dados | Simular operações CRUD e visualizar os efeitos de uma transação |
+| Arquitetura | Acompanhar a troca de dados entre componentes com responsabilidades diferentes |
+| Agentes de IA | Visualizar uma tarefa desde a entrada até o uso de uma ferramenta e a devolução do resultado |
+| DevOps | Simular as etapas de build, teste e entrega de uma aplicação |
+| Metodologias Ágeis | Acompanhar um fluxo Kanban, com limites de trabalho em andamento e bloqueios |
+
+No Backend, a evolução prevista inclui novos fluxos HTTP, inicialização do Spring e uma demonstração específica de persistência. Consulte o [contexto técnico do NARA Lab](context.md) para o contrato da API, a lógica de reprodução e o inventário dos sprites.
