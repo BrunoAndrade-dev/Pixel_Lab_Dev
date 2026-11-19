@@ -47,6 +47,14 @@ A cada nova simulação bem-sucedida, o frontend sorteia seis integrantes distin
 
 A sala, os racks e o notebook ficam em [frontend/public/scenarios](frontend/public/scenarios). As âncoras de chão e os percursos usam coordenadas proporcionais ao cenário. As máscaras que desenham as mesas à frente dos personagens correspondem à imagem atual da sala. Ao alterar a arte, revise também as âncoras, os corredores e essas máscaras.
 
+## Módulo Inteligência Artificial
+
+- `GET /api/ia/scenarios` lista os cenários. `POST /api/ia/simulations` calcula a sequência e sorteia `codex` ou `claude-code`. A resposta contém `schemaVersion`, `agent`, `steps` e `outcome`. O navegador sorteia os integrantes humanos sem reposição quando recebe a resposta. Pausar, revisar ou reiniciar a reprodução usa a execução já recebida.
+- Na biblioteca, `sourceAvailable: false` simula a falha da consulta. A evidência exibida é a linha da tabela de cadastro no README que registra o resultado `503`. A consulta é encenada e a ausência da fonte faz a resposta declarar que o status segue sem confirmação.
+- Na hamburgueria, os dois clientes e as três estações de cozinha recebem cinco integrantes distintos. Os dois pedidos chegam à mesma comanda. O resultado registra `clarificationTurns` por cliente e os campos da comanda para comparação.
+- Cada etapa tem um papel, um identificador de movimento, um diálogo, duas legendas e observações para o inspetor. As posições são reconstruídas até a etapa escolhida, inclusive ao saltar pelo histórico. A reprodução compartilha o relógio do módulo Backend.
+- Os PNGs originais dos ícones estão em `backend/sprites/ia/`. As cópias WebP e os cenários de proporção 2:1 estão em `frontend/public/scenarios/ia/`. Os movimentos e as âncoras dos cenários ficam em `frontend/app/ai-scenarios.mjs`.
+
 ## Critérios de continuidade
 
 - Ao adicionar um cenário, defina entradas, resultados, regras de negócio e estados de cada etapa. Mantenha alinhados o catálogo da API, a rota da demonstração e os papéis que a cena sabe renderizar.

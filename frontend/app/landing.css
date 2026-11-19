@@ -246,6 +246,14 @@
   letter-spacing: -.035em;
 }
 
+.module-link {
+  align-self: flex-start;
+  margin-top: 10px;
+  color: #724500;
+  font-weight: 700;
+  text-underline-offset: 4px;
+}
+
 .module-backend {
   grid-row: span 2;
   gap: 17px;

@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import SiteHeader from './site-header';
 import TechnologyScene from './technology-scene';
+import { aiModulePath } from './ai-scenarios.mjs';
 import './landing.css';
 
 const modules = [
@@ -10,7 +11,7 @@ const modules = [
   'Backend',
   'Banco de Dados',
   'Arquitetura',
-  'Agentes de IA',
+  'Inteligência Artificial',
   'DevOps',
   'Metodologias Ágeis',
 ];
@@ -39,6 +40,9 @@ export default function LandingPage() {
           {modules.map(name => (
             <li key={name} className={name === 'Backend' ? 'module-backend' : 'module-item'}>
               <h3>{name}</h3>
+              {name === 'Inteligência Artificial' && (
+                <Link className="module-link" href={aiModulePath}>Acessar simulações <span aria-hidden="true">↗</span></Link>
+              )}
               {name === 'Backend' && (
                 <Link className="scenario-card" href="/modulos/backend/cadastro-de-produtos">
                   <div className="scenario-copy">

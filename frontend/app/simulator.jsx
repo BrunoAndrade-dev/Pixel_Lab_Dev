@@ -1,10 +1,11 @@
 'use client';
 
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import Room from './room';
-import { drawCast, handoffDuration, previewCast, sceneTime, stations, stepDuration } from './room-motion.mjs';
+import { drawCast, previewCast, stations } from './room-motion.mjs';
+import useSimulationPlayback from './use-simulation-playback';
 
 const presets = [{
   name: 'Cadastro válido',
@@ -36,11 +37,6 @@ const initial = {
 const key = 'pixel-lab.settings.v1';
 const pretty = value => JSON.stringify(value, null, 2);
 
-/** Cria um relógio isolado para uma etapa, com ou sem a entrada animada. */
-function createCursor(index, animate = true) {
-  return { index, animate, clock: { elapsed: 0, started: null, rate: 1 } };
-}
-
 /** Reproduz a sequência determinística do cenário de cadastro e exibe os dados de cada etapa. */
 export default function Simulator() {
   const [catalog, setCatalog] = useState(null),
@@ -66,9 +62,7 @@ export default function Simulator() {
     [side, setSide] = useState('Entrada'),
     [detail, setDetail] = useState('HTTP');
   const [result, setResult] = useState(null),
-    [cursor, setCursor] = useState(() => createCursor(0)),
     [cast, setCast] = useState(previewCast),
-    [play, setPlay] = useState(false),
     [inspect, setInspect] = useState(null);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState(''),
@@ -91,56 +85,19 @@ export default function Simulator() {
     setNotice('');
   };
   const steps = result?.steps || [];
+  const { cursor, step, last, playing: play, previous, jump, toggle: togglePlayback, reset, pause } =
+    useSimulationPlayback(steps, config.speed, setInspect);
   const pos = cursor.index;
-  const step = steps[pos];
-  const last = pos === steps.length - 1;
-  const previous = cursor.animate ? steps[pos - 1]?.actor : null;
-  const duration = last ? (previous && previous !== step?.actor ? handoffDuration : 0) : stepDuration;
-  const rate = Number(config.speed) || 1;
-  useLayoutEffect(() => {
-    if (!play || !step) return;
-    const clock = cursor.clock;
-    clock.started = performance.now();
-    clock.rate = rate;
-    const id = setTimeout(() => {
-      clock.elapsed = duration;
-      clock.started = null;
-      if (last) {
-        setPlay(false);
-        return;
-      }
-      setCursor(createCursor(pos + 1));
-      setInspect(null);
-    }, Math.max(0, duration - clock.elapsed) / rate);
-    return () => {
-      clearTimeout(id);
-      clock.elapsed = Math.min(duration, sceneTime(clock));
-      clock.started = null;
-    };
-  }, [play, pos, step, last, cursor, rate, duration]);
   const actor = inspect || step?.actor || 'client',
     station = stations[actor] || stations.client;
   const bubble = inspect ? station[3] : step?.bubble;
   const caption = inspect ? station[config.level === 'basic' ? 4 : 5] : step?.caption?.[config.level] || 'Configure a entrada e execute o exemplo para acompanhar o pedido.';
-  /** Seleciona uma etapa existente e pausa o relógio de reprodução para inspeção. */
-  function jump(n) {
-    setPlay(false);
-    setInspect(null);
-    setCursor(createCursor(Math.min(Math.max(0, n), steps.length - 1), false));
-  }
-
-  /** Pausa, retoma ou reinicia a reprodução mantendo o elenco da mesma execução. */
-  function togglePlayback() {
-    if (!play && last && sceneTime(cursor.clock) >= duration) setCursor(createCursor(0));
-    setInspect(null);
-    setPlay(!play);
-  }
   /** Solicita ao Spring Boot uma nova sequência e inicia a reprodução a partir da primeira etapa. */
   async function run(e) {
     e.preventDefault();
     if (busy) return;
     setBusy(true);
-    setPlay(false);
+    pause();
     setError('');
     setNotice('');
     const inputs = {
@@ -164,10 +121,8 @@ export default function Simulator() {
       if (!data.steps?.length) throw new Error();
       setResult(data);
       setSent(inputs);
-      setInspect(null);
       setCast(drawCast(cast));
-      setCursor(createCursor(0));
-      setPlay(true);
+      reset(true);
       setTab('Sala');
     } catch {
       setError('Não foi possível iniciar a simulação. Confira se o backend Spring Boot está disponível e tente novamente.');
@@ -192,9 +147,7 @@ export default function Simulator() {
       failure: p.failure
     }));
     setTab('Sala');
-    setPlay(false);
-    setCursor(createCursor(0));
-    setInspect(null);
+    reset();
     setResult(null);
     setSent(null);
     setError('');
@@ -214,7 +167,7 @@ export default function Simulator() {
  <div className="grid"><section className="stage"><div className="bar"><h2>Sala de simulação</h2><span className="status"><i />{busy ? 'Carregando' : play ? 'Reproduzindo' : result ? 'Em revisão' : 'Pronta'}</span></div>
  <Room previous={inspect ? null : previous} cast={cast} clock={cursor.clock} active={actor} playing={play} bubble={bubble} onInspect={a => {
               setInspect(a);
-              setPlay(false);
+              pause();
             }} />
  <div className="caption" aria-live="polite"><small>{station[0]} <em> / </em> {cast[actor].name} <em> / </em> {config.level === 'basic' ? 'Iniciante' : 'Técnico'}</small><p>{caption}</p></div>
  <div className="playbar"><button disabled={!result} onClick={() => jump(0)} aria-label="Reiniciar" title="Reiniciar">↺</button><button disabled={!result || pos === 0} onClick={() => jump(pos - 1)} aria-label="Etapa anterior" title="Etapa anterior">◀</button>

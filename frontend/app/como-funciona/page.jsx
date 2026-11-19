@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import SiteHeader from '../site-header';
+import { aiModulePath } from '../ai-scenarios.mjs';
 import '../landing.css';
 
 export const metadata = {
@@ -31,17 +32,22 @@ export default function HowItWorksPage() {
           <ol className="about-steps">
             <li>
               <h3>Escolha um cenário</h3>
-              <p>No cadastro de produtos, informe nome e preço e, se quiser, simule a indisponibilidade do banco.</p>
+              <p>Explore o cadastro de produtos no Backend ou escolha Biblioteca ou Hamburgueria em Inteligência Artificial.</p>
             </li>
             <li>
               <h3>Acompanhe a execução</h3>
-              <p>Observe a passagem da requisição pela sala, alterne entre legendas iniciante e técnica e pause ou volte para revisar.</p>
+              <p>Observe os personagens em cada etapa, alterne entre legendas iniciante e técnica e pause ou volte para revisar.</p>
             </li>
             <li>
               <h3>Compare os resultados</h3>
-              <p>Use o inspetor para relacionar o código Java, o estado dos registros e a resposta HTTP em cada cenário.</p>
+              <p>Use o inspetor para acompanhar os dados da API, a fonte consultada ou as comandas, conforme o cenário.</p>
             </li>
           </ol>
+        </section>
+        <section className="about-demo" aria-labelledby="about-ai-title">
+          <h2 id="about-ai-title">Inteligência Artificial</h2>
+          <p>Veja como uma fonte sustenta uma resposta na biblioteca e como os detalhes de um prompt mudam o atendimento na hamburgueria.</p>
+          <Link href={aiModulePath} className="modules-button">Abrir módulo de IA</Link>
         </section>
 
         <section className="about-demo" aria-labelledby="about-demo-title">
