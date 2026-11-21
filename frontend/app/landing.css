@@ -254,6 +254,22 @@
   text-underline-offset: 4px;
 }
 
+.scenario-ai-illustrations {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.scenario-ai-illustrations img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
 .module-backend {
   grid-row: span 2;
   gap: 17px;
@@ -344,7 +360,7 @@
   margin-bottom: clamp(36px, 6vw, 76px);
 }
 
-.about-intro h1 {
+.about-intro .about-title {
   margin: 0 0 22px;
   font-size: clamp(2.75rem, 7vw, 6rem);
   letter-spacing: -.075em;

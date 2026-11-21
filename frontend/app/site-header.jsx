@@ -10,11 +10,12 @@ export default function SiteHeader({ current }) {
         <Image src="/brand/nara-lab.png" alt="NARA Lab" width={213} height={72} preload={home} unoptimized />
       </Link>
       <nav className="landing-nav" aria-label="Navegação do NARA Lab">
-        <Link href="/como-funciona" aria-current={current === 'about' ? 'page' : undefined}>
+        <Link href={home ? '#inicio' : '/#inicio'}>Início</Link>
+        <Link href={home ? '#como-funciona' : '/#como-funciona'}>
           Como funciona
         </Link>
         <Link href={home ? '#modulos' : '/#modulos'} className="modules-button">
-          Acessar módulos
+          Módulos
         </Link>
       </nav>
     </header>

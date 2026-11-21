@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import SiteHeader from './site-header';
 import TechnologyScene from './technology-scene';
+import HowItWorks from './how-it-works';
 import { aiModulePath } from './ai-scenarios.mjs';
 import './landing.css';
 
@@ -15,6 +16,8 @@ const modules = [
   'DevOps',
   'Metodologias Ágeis',
 ];
+
+const aiTopics = ['Conceito', 'prompt', 'agents', 'skills', 'harness'];
 
 const topics = ['Java', 'Spring Boot', 'Requisições HTTP', 'APIs'];
 
@@ -34,14 +37,30 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <section className="about-page" id="como-funciona" aria-label="Como funciona">
+        <HowItWorks />
+      </section>
+
       <section className="module-section" id="modulos" tabIndex={-1} aria-labelledby="modules-title">
         <h2 id="modules-title">Módulos</h2>
         <ul className="module-grid">
           {modules.map(name => (
-            <li key={name} className={name === 'Backend' ? 'module-backend' : 'module-item'}>
+            <li key={name} className={name === 'Backend' || name === 'Inteligência Artificial' ? 'module-backend' : 'module-item'}>
               <h3>{name}</h3>
               {name === 'Inteligência Artificial' && (
-                <Link className="module-link" href={aiModulePath}>Acessar simulações <span aria-hidden="true">↗</span></Link>
+                <Link className="scenario-card" href={aiModulePath}>
+                  <div className="scenario-copy">
+                    <p className="scenario-framework">Codex e Claude Code</p>
+                    <h4>Cenários — Consulta à documentação e clareza de prompts</h4>
+                    <ul className="scenario-topics" aria-label="Tópicos de Inteligência Artificial">
+                      {aiTopics.map(topic => <li key={topic}>{topic}</li>)}
+                    </ul>
+                  </div>
+                  <div className="scenario-ai-illustrations">
+                    <Image src="/scenarios/ia/codex.webp" alt="Codex" width={48} height={48} unoptimized />
+                    <Image src="/scenarios/ia/claude-code.webp" alt="Claude Code" width={48} height={48} unoptimized />
+                  </div>
+                </Link>
               )}
               {name === 'Backend' && (
                 <Link className="scenario-card" href="/modulos/backend/cadastro-de-produtos">
