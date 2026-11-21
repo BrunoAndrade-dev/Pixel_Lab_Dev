@@ -19,6 +19,13 @@ body {
   font: 16px/1.45 Arial, Helvetica, sans-serif;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .motion-enter {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,

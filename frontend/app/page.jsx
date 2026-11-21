@@ -1,83 +1,38 @@
-import Image from 'next/image';
-import Link from 'next/link';
 import SiteHeader from './site-header';
 import TechnologyScene from './technology-scene';
 import HowItWorks from './how-it-works';
-import { aiModulePath } from './ai-scenarios.mjs';
+import ScrollReveal from './scroll-reveal';
+import ModulesCarousel from './modules-carousel';
+import MotionReveal from './motion-reveal';
 import './landing.css';
-
-const modules = [
-  'Lógica de Programação',
-  'Frontend',
-  'Backend',
-  'Banco de Dados',
-  'Arquitetura',
-  'Inteligência Artificial',
-  'DevOps',
-  'Metodologias Ágeis',
-];
-
-const aiTopics = ['Conceito', 'prompt', 'agents', 'skills', 'harness'];
-
-const topics = ['Java', 'Spring Boot', 'Requisições HTTP', 'APIs'];
 
 /** Exibe a introdução e mantém um caminho direto entre o catálogo e a simulação disponível. */
 export default function LandingPage() {
   return (
     <main className="landing" id="inicio">
-      <SiteHeader current="home" />
+      <noscript><style>{'.motion-enter { opacity: 1 !important; transform: none !important; }'}</style></noscript>
+      <MotionReveal>
+        <SiteHeader current="home" />
+      </MotionReveal>
 
       <section className="landing-hero" aria-labelledby="landing-title">
         <TechnologyScene />
-        <div className="hero-copy">
+        <MotionReveal className="hero-copy" delay={0.1}>
           <h1 id="landing-title">
             Desbloqueie seu<br /> potencial em<br /> <span>programação.</span>
           </h1>
           <p>Aprenda na prática com simulações interativas e animações 2D.</p>
-        </div>
+        </MotionReveal>
       </section>
 
-      <section className="about-page" id="como-funciona" aria-label="Como funciona">
+      <ScrollReveal className="about-page" id="como-funciona" aria-label="Como funciona">
         <HowItWorks />
-      </section>
+      </ScrollReveal>
 
-      <section className="module-section" id="modulos" tabIndex={-1} aria-labelledby="modules-title">
+      <ScrollReveal className="module-section" id="modulos" tabIndex={-1} aria-labelledby="modules-title">
         <h2 id="modules-title">Módulos</h2>
-        <ul className="module-grid">
-          {modules.map(name => (
-            <li key={name} className={name === 'Backend' || name === 'Inteligência Artificial' ? 'module-backend' : 'module-item'}>
-              <h3>{name}</h3>
-              {name === 'Inteligência Artificial' && (
-                <Link className="scenario-card" href={aiModulePath}>
-                  <div className="scenario-copy">
-                    <p className="scenario-framework">Codex e Claude Code</p>
-                    <h4>Cenários — Consulta à documentação e clareza de prompts</h4>
-                    <ul className="scenario-topics" aria-label="Tópicos de Inteligência Artificial">
-                      {aiTopics.map(topic => <li key={topic}>{topic}</li>)}
-                    </ul>
-                  </div>
-                  <div className="scenario-ai-illustrations">
-                    <Image src="/scenarios/ia/codex.webp" alt="Codex" width={48} height={48} unoptimized />
-                    <Image src="/scenarios/ia/claude-code.webp" alt="Claude Code" width={48} height={48} unoptimized />
-                  </div>
-                </Link>
-              )}
-              {name === 'Backend' && (
-                <Link className="scenario-card" href="/modulos/backend/cadastro-de-produtos">
-                  <div className="scenario-copy">
-                    <p className="scenario-framework">Framework Spring Boot</p>
-                    <h4>Cenário — Cadastro de Produtos</h4>
-                    <ul className="scenario-topics" aria-label="Tópicos da simulação">
-                      {topics.map(topic => <li key={topic}>{topic}</li>)}
-                    </ul>
-                  </div>
-                  <Image className="scenario-illustration" src="/technologies/spring-boot.png" alt="" width={138} height={138} unoptimized />
-                </Link>
-              )}
-            </li>
-          ))}
-        </ul>
-      </section>
+        <ModulesCarousel />
+      </ScrollReveal>
     </main>
   );
 }

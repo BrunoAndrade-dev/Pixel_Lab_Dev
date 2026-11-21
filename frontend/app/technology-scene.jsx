@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import { motion, useReducedMotion } from 'framer-motion';
 
 const technologies = [
   { id: 'java', name: 'Java' },
@@ -48,9 +49,12 @@ export default function TechnologyScene() {
   const [trajectories, setTrajectories] = useState(null);
   const [visible, setVisible] = useState(true);
   const [paused, setPaused] = useState(false);
+  const [loaded, setLoaded] = useState({});
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     setTrajectories(createTrajectories());
+    if (!('IntersectionObserver' in window)) return;
     const observer = new IntersectionObserver(([entry]) => setVisible(entry.isIntersecting));
     observer.observe(scene.current);
     return () => observer.disconnect();
@@ -61,7 +65,23 @@ export default function TechnologyScene() {
       <div className="technology-scene" ref={scene} data-animated={Boolean(trajectories)} data-paused={paused || !visible}>
         {technologies.map(({ id, name }, index) => (
           <div key={id} className={`technology-item technology-${id}`} style={trajectories?.[index]}>
-            <Image src={`/technologies/${id}.png`} alt={name} width={220} height={220} loading="eager" unoptimized />
+            <motion.div
+              className="motion-enter technology-entrance"
+              initial={{ opacity: 0, y: 26, scale: 0.82 }}
+              animate={loaded[id] ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 26, scale: 0.82 }}
+              transition={{ duration: reducedMotion ? 0 : 0.75, delay: reducedMotion ? 0 : index * 0.065, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <Image
+                src={`/technologies/${id}.png`}
+                alt={name}
+                width={220}
+                height={220}
+                loading="eager"
+                unoptimized
+                onLoad={() => setLoaded(current => ({ ...current, [id]: true }))}
+                onError={() => setLoaded(current => ({ ...current, [id]: true }))}
+              />
+            </motion.div>
           </div>
         ))}
       </div>

@@ -2,6 +2,7 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import MotionReveal from './motion-reveal';
 import { useEffect, useState } from 'react';
 import AiRoom from './ai-room';
 import { agents, aiModulePath, aiScenarios, aiStepDuration, drawAiCast } from './ai-scenarios.mjs';
@@ -105,7 +106,7 @@ export default function AiSimulator({ id }) {
           <div>{scenario.description}</div>
         </div>
         <div className="grid">
-          <section className="stage">
+          <MotionReveal as="section" className="stage" delay={0.08}>
             <div className="bar">
               <h2>{scenario.location}</h2>
               <span className="status"><i />{busy ? 'Carregando' : playing ? 'Reproduzindo' : run ? 'Em revisão' : 'Pronta'}</span>
@@ -125,8 +126,8 @@ export default function AiSimulator({ id }) {
                 {speeds.map(speed => <option key={speed} value={speed}>{speed}×</option>)}
               </select></label>
             </div>
-          </section>
-          <aside>
+          </MotionReveal>
+          <MotionReveal as="aside" delay={0.16}>
             <div className="bar"><h2>Configuração</h2></div>
             <form onSubmit={execute}>
               {isLibrary && <label>Fonte consultada<select value={String(settings.sourceAvailable)}
@@ -144,9 +145,9 @@ export default function AiSimulator({ id }) {
               {error && <p role="alert" className="notice">{error}</p>}
               {notice && <p role="status" className="notice">{notice}</p>}
             </form>
-          </aside>
+          </MotionReveal>
         </div>
-        <section className="inspector">
+        <MotionReveal as="section" className="inspector" delay={0.08}>
           <div className="bar">
             <h2>Inspetor</h2>
             <div className="tabs" aria-label="Dados da simulação">
@@ -193,7 +194,7 @@ export default function AiSimulator({ id }) {
                 ))}
               </dl>
             )}
-        </section>
+        </MotionReveal>
       </main>
     </div>
   );

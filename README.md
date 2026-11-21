@@ -77,6 +77,10 @@ No Swagger, abra `POST /api/simulations`, clique em **Try it out**, escolha um e
 - `GET /api/ia/scenarios` lista os cenários `biblioteca` e `hamburgueria`.
 - `POST /api/ia/simulations` recebe `scenario` e retorna o assistente sorteado, as etapas e o resultado. Na biblioteca, use `sourceAvailable: false` para simular falha de acesso à documentação. O Swagger oferece exemplos para os dois cenários.
 
+## Créditos de interface
+
+O carrossel de módulos é uma adaptação de **Skiper 49 / Carousel_003**, de [Skiper UI](https://skiper-ui.com/v1/skiper49), criado por [Gurvinder Singh](https://gxuri.me), utilizando Swiper.js. O crédito é mantido para o uso da versão gratuita do componente.
+
 ## Passos futuros
 
 O catálogo já exibe as áreas abaixo. Os conteúdos indicados são propostas iniciais para as próximas implementações.
