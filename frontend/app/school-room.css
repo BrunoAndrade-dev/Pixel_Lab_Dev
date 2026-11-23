@@ -1,0 +1,5 @@
+.school-cast.school-cast-compact { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 0; padding: 0; }
+.school-cast.school-cast-compact li { display: flex; flex: 1 1 150px; gap: 6px; align-items: baseline; flex-wrap: wrap; padding: 9px 12px; border-radius: 9px; font-size: .78rem; }
+.school-cast-compact li span { color: #605548; }
+.school-cast-compact li.school-actor-active { background: #fff0ca; border-color: #a65a00; }
+.school-dialogue { position: absolute; translate: -50% -100%; max-width: 34%; padding: 9px 12px; border: 1px solid #b79760; border-radius: 10px; background: #fffaf0f5; color: #30271a; font-size: clamp(.75rem, 1vw, .92rem); line-height: 1.4; box-shadow: 0 4px 12px #33291b15; }

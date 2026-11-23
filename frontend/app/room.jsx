@@ -160,7 +160,7 @@ function drawRoom(ctx, actors, images, active, handoff, elapsed) {
 }
 
 /** Exibe o elenco e mantém a animação e a inspeção sincronizadas com a etapa atual. */
-export default function Room({ active, playing, onInspect, bubble, previous, cast, clock }) {
+export default function Room({ active, playing, onInspect, bubble, previous, cast, clock, preview = false }) {
   const canvas = useRef(null);
   const viewport = useRef(null);
   const [images, setImages] = useState({});
@@ -195,6 +195,7 @@ export default function Room({ active, playing, onInspect, bubble, previous, cas
   }, []);
 
   useEffect(() => {
+    if (preview) return;
     const container = viewport.current;
     const sceneWidth = canvas.current.clientWidth;
     const margin = Math.min(80, container.clientWidth / 4);
@@ -202,7 +203,7 @@ export default function Room({ active, playing, onInspect, bubble, previous, cas
     if (target < container.scrollLeft + margin || target > container.scrollLeft + container.clientWidth - margin) {
       container.scrollLeft = target - container.clientWidth / 2;
     }
-  }, [x]);
+  }, [x, preview]);
 
   useEffect(() => {
     const ctx = canvas.current.getContext('2d');
@@ -233,11 +234,11 @@ export default function Room({ active, playing, onInspect, bubble, previous, cas
 
   return (
     <>
-      <p className="room-scroll-hint">Deslize para explorar toda a sala.</p>
-      <div className="room-viewport" ref={viewport} tabIndex={0} role="region" aria-label="Mapa da sala de simulação">
+      {!preview && <p className="room-scroll-hint">Deslize para explorar toda a sala.</p>}
+      <div className="room-viewport" ref={viewport} tabIndex={preview ? undefined : 0} role={preview ? 'img' : 'region'} aria-label={preview ? 'Prévia de personagens interagindo em uma sala de simulação 2D' : 'Mapa da sala de simulação'}>
         <div className="room">
           <canvas width={roomWidth} height={roomHeight} ref={canvas} aria-hidden="true" />
-          {Object.entries(stations).map(([id, [title, left, top]]) => (
+          {!preview && Object.entries(stations).map(([id, [title, left, top]]) => (
             <button
               type="button"
               key={id}
@@ -251,7 +252,7 @@ export default function Room({ active, playing, onInspect, bubble, previous, cas
               {title}
             </button>
           ))}
-          {bubble && (
+          {!preview && bubble && (
             <div className="bubble" style={{ left: `${Math.min(x, 78)}%`, bottom: `${100 - y + (seatedRoles.has(active) ? 18 : 24)}%` }}>
               {bubble}
             </div>

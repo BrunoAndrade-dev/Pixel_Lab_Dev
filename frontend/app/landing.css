@@ -593,9 +593,35 @@
   padding-top: clamp(40px, 5vw, 64px);
 }
 
-.about-intro {
-  max-width: 48rem;
+.about-overview {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 56px);
   margin-bottom: clamp(36px, 6vw, 76px);
+}
+
+.about-intro { min-width: 0; }
+
+.simulation-preview {
+  overflow: hidden;
+  min-width: 0;
+  border: 1px solid #e6dfd1;
+  border-radius: 18px;
+  background: #fffcf5;
+  box-shadow: 0 12px 36px #5f381a0d;
+}
+
+.simulation-preview .room-viewport { overflow: hidden; }
+.simulation-preview .room {
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 2 / 1;
+}
+
+.simulation-preview-poster {
+  aspect-ratio: 2 / 1;
+  background: #fffcf5 url('/scenarios/nara-lab-room.png') center / cover no-repeat;
 }
 
 .about-intro p {
@@ -604,6 +630,14 @@
   font-size: clamp(1.05rem, 2.1vw, 1.32rem);
   line-height: 1.55;
 }
+
+.about-intro p a {
+  color: #a65a00;
+  font-weight: 700;
+  text-underline-offset: 3px;
+}
+
+.about-intro p a:hover { color: #724500; }
 
 .about-page h2 {
   margin: 0 0 17px;
@@ -650,6 +684,8 @@
 .about-demo p { max-width: 42rem; margin-bottom: 16px; }
 
 @media (max-width: 980px) {
+  .about-overview { grid-template-columns: 1fr; }
+  .simulation-preview { width: 100%; max-width: 680px; justify-self: center; }
   .technology-item { --motion-scale: .75; }
   .technology-java { --left: 16%; --top: 27%; }
   .technology-python { --left: 10%; --top: 51%; }

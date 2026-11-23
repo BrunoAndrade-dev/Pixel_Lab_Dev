@@ -6,6 +6,7 @@ O NARA Lab é uma plataforma educativa de simulações interativas. Em uma sala 
 
 - Página inicial responsiva com ícones animados, catálogo por áreas e uma aba **Como funciona** com a proposta didática e orientações para a primeira demonstração.
 - Módulo **Backend** com o cenário **Cadastro de Produtos**, que acompanha um `POST /produtos` simulado no Spring Boot. Cliente, Controller, Service, Entity, Repository e Banco têm papéis identificáveis na sala.
+- **CRUD na escola**: aluno, professor e secretaria demonstram cadastro, consulta, atualização e exclusão de registros de notas, com histórico detalhado em níveis iniciante e técnico.
 - Módulo **Inteligência Artificial** com a **Biblioteca**, sobre respostas apoiadas em documentação, e a **Hamburgueria**, sobre como a precisão de um prompt muda o atendimento.
 - Laboratório em pixel art inspirado na sala real, com estações de trabalho, data center e dez sprites da equipe. Cada execução sorteia seis integrantes distintos, um por papel. Os personagens caminham para entregar o envelope, e Service, Repository e Entity têm postos sentados.
 - Configuração de nome, preço, falha simulada, nível da legenda e velocidade. As preferências podem ser salvas no navegador.
@@ -20,6 +21,21 @@ O NARA Lab é uma plataforma educativa de simulações interativas. Em uma sala 
 | Entrada válida e banco indisponível | `503 Service Unavailable` | Nenhum produto cadastrado |
 
 Cada execução começa com registros vazios. O armazenamento é simulado em memória durante a demonstração.
+
+### Backend · CRUD na escola
+
+Abra **Backend → CRUD na escola**, cadastre uma nota e use o ID atribuído para consultar, atualizar ou excluir o registro. Professor e secretaria ficam voltados aos seus computadores; a prova e os envelopes representam a circulação dos dados.
+
+| Operação | Requisição didática | Resultado normal |
+| --- | --- | --- |
+| Cadastrar | `POST /notas` | `201 Created` |
+| Consultar | `GET /notas/{id}` | `200 OK` |
+| Atualizar | `PUT /notas/{id}` com todos os campos | `200 OK` |
+| Excluir nota | `DELETE /notas/{id}` | `204 No Content` |
+
+Notas fora de 0 a 10 interrompem o fluxo no professor (`400` didático); um ID positivo inexistente produz `404`; secretaria indisponível produz `503`. As falhas preservam os registros. As notas ficam na memória da página entre operações, e os IDs excluídos não são reutilizados. Recarregar ou sair da página encerra a sessão de notas. Só as preferências são salvas explicitamente no navegador.
+
+A execução aplica seu estado final uma única vez, ao concluir a reprodução ou avançar à última etapa. Voltar no Histórico revisa snapshots, sem repetir chamadas à API nem aplicar a alteração novamente. A exclusão remove a nota, não o aluno.
 
 ### Inteligência Artificial
 
@@ -76,6 +92,9 @@ No Swagger, abra `POST /api/simulations`, clique em **Try it out**, escolha um e
 
 - `GET /api/ia/scenarios` lista os cenários `biblioteca` e `hamburgueria`.
 - `POST /api/ia/simulations` recebe `scenario` e retorna o assistente sorteado, as etapas e o resultado. Na biblioteca, use `sourceAvailable: false` para simular falha de acesso à documentação. O Swagger oferece exemplos para os dois cenários.
+
+- `GET /api/school/scenarios` lista o cenário escolar.
+- `POST /api/school/simulations` calcula o CRUD a partir de `operation`, `inputs`, `records`, `nextId` e `failure`. HTTP `200` pertence ao cálculo; `simulatedResponse.status` representa o resultado didático. IDs/configurações inválidas geram HTTP `400` na própria API. O navegador envia o snapshot da sessão; não há armazenamento acadêmico real.
 
 ## Créditos de interface
 

@@ -14,7 +14,7 @@ import 'swiper/css/pagination';
 const modules = [
   { title: 'Lógica de Programação', category: 'O primeiro passo', description: 'Aprenda a organizar ideias e transformar problemas em soluções.', tags: ['Sua porta de entrada', 'Fundamentos da programação'], art: 'logic' },
   { title: 'Frontend', category: 'Interfaces e experiências', description: 'Explore a construção de interfaces que conectam pessoas e tecnologia.', tags: ['Design de interfaces'], art: 'frontend' },
-  { title: 'Backend', category: 'Java e Spring Boot', description: 'Acompanhe o cadastro de produtos, da requisição à persistência dos dados.', tags: ['Java', 'Spring Boot', 'Requisições HTTP', 'APIs'], art: 'backend', href: '/modulos/backend/cadastro-de-produtos' },
+  { title: 'Backend', category: 'Java e Spring Boot', description: 'Explore requisições, persistência de dados e operações CRUD em cenários interativos.', tags: ['Java', 'Spring Boot', 'Requisições HTTP', 'APIs'], art: 'backend', href: '/modulos/backend' },
   { title: 'Banco de Dados', category: 'Dados com propósito', description: 'Conheça o lugar onde as informações do sistema são organizadas e armazenadas.', tags: ['PostgreSQL', 'Armazenamento de informações'], art: 'database' },
   { title: 'Arquitetura', category: 'Conexões que fazem sentido', description: 'Entenda como as partes de um sistema se conectam para trabalhar em conjunto.', tags: ['Arquitetura de software'], art: 'architecture' },
   { title: 'Inteligência Artificial', category: 'Codex e Claude Code', description: 'Explore a consulta à documentação e a clareza de prompts na biblioteca e na hamburgueria.', tags: ['Conceitos de IA', 'Prompts', 'Agentes', 'Skills', 'Harness'], art: 'ai', href: aiModulePath },

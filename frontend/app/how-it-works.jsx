@@ -1,20 +1,27 @@
+import SimulationPreview from './simulation-preview';
+
 /** Compartilha a apresentação da plataforma entre a seção inicial e a rota institucional. */
 export default function HowItWorks({ standalone = false }) {
   const Title = standalone ? 'h1' : 'h2';
   return (
     <>
-        <header className="about-intro">
-          <Title className="about-title">Como funciona</Title>
-          <p>
-            O NARA Lab torna visíveis os processos que normalmente acontecem dentro de um sistema.
-            Em uma sala isométrica em pixel art, cada personagem representa um papel, e cada
-            etapa conecta o que acontece no cenário ao código e aos dados que explicam o resultado.
-          </p>
-          <p>
-            A plataforma foi pensada para professores conduzirem demonstrações em aula e para
-            estudantes revisarem os exemplos no próprio ritmo.
-          </p>
-        </header>
+        <div className="about-overview">
+          <header className="about-intro">
+            <Title className="about-title">Como funciona</Title>
+            <p>
+              O NARA Lab torna visíveis os processos que normalmente acontecem dentro de um sistema.
+              Em uma sala isométrica em pixel art, cada personagem representa um papel, e cada
+              etapa conecta o que acontece no cenário ao código e aos dados que explicam o resultado.
+            </p>
+            <p>
+              Desenvolvida pelo grupo <a href="https://site.nucleonara.tech/" target="_blank" rel="noopener noreferrer">NARA</a>,
+              a plataforma apoia a compreensão de conceitos e o aprendizado de estudantes de
+              Engenharia de Computação e áreas afins, por meio de exemplos práticos e tecnologias
+              utilizadas nos projetos do grupo.
+            </p>
+          </header>
+          <SimulationPreview />
+        </div>
 
         <section className="about-walkthrough" aria-labelledby="walkthrough-title">
           <h2 id="walkthrough-title">Da configuração à resposta</h2>
