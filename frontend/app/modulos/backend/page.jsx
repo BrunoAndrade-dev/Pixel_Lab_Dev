@@ -10,6 +10,8 @@ export const metadata = { title: 'Backend' };
 const scenarios = [
   { href: '/modulos/backend/cadastro-de-produtos', image: '/scenarios/nara-lab-room.png', label: 'Simulação disponível', title: 'Cadastro de produtos', description: 'Acompanhe uma requisição pelas camadas do Spring Boot, incluindo validação e falhas de persistência.' },
   { href: '/modulos/backend/crud-escolar', image: '/scenarios/school/school-room.webp', label: 'Simulação disponível', title: 'CRUD na escola', description: 'Cadastre, consulte, atualize e exclua notas, acompanhando a interação entre sala de aula e secretaria.' },
+  { href: '/modulos/backend/dto-escolar', image: '/scenarios/school/school-room.webp', label: 'Simulação disponível', title: 'DTO e boletim escolar', description: 'Compare os dados de entrada, a entidade e a resposta da aplicação, representada por um boletim escolar.' },
+  { href: '/modulos/backend/validacao-e-erros', image: '/scenarios/school/school-room.webp', label: 'Simulação disponível', title: 'Validação e tratamento de erros', description: 'Descubra como validar campos, identificar problemas e devolver respostas claras sem alterar os dados em caso de falha.' },
 ];
 
 export default function BackendModulePage() {

@@ -15,11 +15,7 @@ export default function SchoolCrudPage() {
       <SiteHeader />
       <main className="school-page">
         <Link className="school-back" href="/modulos/backend">← Simulações de Backend</Link>
-        <header className="school-intro">
-          <p className="school-eyebrow">Backend · Operações CRUD</p>
-          <h1>CRUD na escola</h1>
-          <p>Uma prova, uma nota e dois ambientes conectados: a sala de aula e a secretaria.</p>
-        </header>
+
         <SchoolSimulator />
       </main>
     </div>

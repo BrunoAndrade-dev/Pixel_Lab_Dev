@@ -1,7 +1,8 @@
 'use client';
 
-import { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import { handoffDuration, sceneTime, stepDuration } from './room-motion.mjs';
+import { hasCompletedPlayback } from './playback-progress.mjs';
 
 /** Cria um relógio virtual para a etapa, preservando posição e velocidade durante pausas. */
 function createCursor(index, animate = true) {
@@ -12,6 +13,8 @@ function createCursor(index, animate = true) {
 export default function useSimulationPlayback(steps, speed, onStepChange, durationForStep) {
   const [cursor, setCursor] = useState(() => createCursor(0));
   const [playing, setPlaying] = useState(false);
+  const [completed, setCompleted] = useState(false);
+  const viewed = useRef(new Set());
   const pos = cursor.index;
   const step = steps[pos];
   const last = pos === steps.length - 1;
@@ -29,6 +32,8 @@ export default function useSimulationPlayback(steps, speed, onStepChange, durati
     const timer = setTimeout(() => {
       clock.elapsed = duration;
       clock.started = null;
+      viewed.current.add(pos);
+      if (hasCompletedPlayback(viewed.current, steps.length)) setCompleted(true);
       if (last) {
         setPlaying(false);
         return;
@@ -41,7 +46,7 @@ export default function useSimulationPlayback(steps, speed, onStepChange, durati
       clock.elapsed = Math.min(duration, sceneTime(clock));
       clock.started = null;
     };
-  }, [playing, pos, step, last, cursor, rate, duration, onStepChange]);
+  }, [playing, pos, step, last, cursor, rate, duration, onStepChange, steps.length]);
 
   /** Posiciona o cursor em uma etapa estática para permitir inspeção. */
   function jump(index) {
@@ -59,10 +64,12 @@ export default function useSimulationPlayback(steps, speed, onStepChange, durati
 
   /** Reinicializa a reprodução ao carregar uma sequência. */
   function reset(autoplay = false) {
+    viewed.current = new Set();
+    setCompleted(false);
     onStepChange?.(null);
     setCursor(createCursor(0));
     setPlaying(autoplay);
   }
 
-  return { cursor, step, last, playing, previous, jump, toggle, reset, pause: () => setPlaying(false) };
+  return { cursor, step, last, playing, previous, completed, jump, toggle, reset, pause: () => setPlaying(false) };
 }

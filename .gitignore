@@ -6,6 +6,9 @@ target/
 coverage/
 *.tsbuildinfo
 next-env.d.ts
+.cache/
+.turbo/
+generated_images/
 
 # Configurações locais e credenciais
 .env
@@ -28,3 +31,6 @@ next-env.d.ts
 .DS_Store
 Thumbs.db
 *.log
+*.tmp
+*.swp
+*.swo

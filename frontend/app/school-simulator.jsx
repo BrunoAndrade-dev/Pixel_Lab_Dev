@@ -3,6 +3,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import SchoolRoom from './school-room';
 import MotionReveal from './motion-reveal';
+import BackendLearningContext from './backend-learning-context';
+import BackendSimulationHeading from './backend-simulation-heading';
+import useBackendQuizAccess from './use-backend-quiz-access';
 import useSimulationPlayback from './use-simulation-playback';
 import { schoolStepDuration } from './school-scene.mjs';
 
@@ -34,6 +37,7 @@ export default function SchoolSimulator() {
   const durationForStep = useCallback(item => item === steps.at(-1) && (!item?.motion || item.motion === 'idle') ? 1000 : schoolStepDuration, [steps]);
   const playback = useSimulationPlayback(steps, settings.speed, undefined, durationForStep);
   const { step, cursor, playing, last, jump, reset, toggle, pause } = playback;
+  const quizUnlocked = useBackendQuizAccess(playback.completed);
   const shownState = step?.state || session;
   const operation = operations[settings.operation];
   const submitted = execution?.request;
@@ -134,6 +138,7 @@ export default function SchoolSimulator() {
 
   return (
     <>
+      <BackendSimulationHeading scenario="crud" title="CRUD na escola" eyebrow="Backend · Operações CRUD" description="Uma prova, uma nota e dois ambientes conectados: a sala de aula e a secretaria." unlocked={quizUnlocked} onOpen={pause} />
       <div className="school-simulation-grid">
         <MotionReveal as="section" className="school-stage" aria-labelledby="school-stage-title">
           <div className="school-panel-bar">
@@ -192,10 +197,10 @@ export default function SchoolSimulator() {
       <MotionReveal as="section" className="school-inspector" aria-labelledby="school-inspector-title">
         <div className="school-panel-bar school-inspector-bar">
           <h2 id="school-inspector-title">Inspetor</h2>
-          <div className="school-tabs" aria-label="Dados da simulação">{['HTTP', 'Código', 'Estado', 'Histórico'].map(tab => <button type="button" key={tab} aria-pressed={detail === tab} onClick={() => setDetail(tab)}>{tab}</button>)}</div>
+          <div className="school-tabs" aria-label="Dados da simulação">{['HTTP', 'Código', 'Estado', 'Histórico', 'Contexto/Objetivo'].map(tab => <button type="button" key={tab} aria-pressed={detail === tab} onClick={() => setDetail(tab)}>{tab}</button>)}</div>
         </div>
         <div className="school-inspector-content">
-          {detail === 'HTTP' ? <>
+          {detail === 'Contexto/Objetivo' ? <BackendLearningContext scenario="crud" /> : detail === 'HTTP' ? <>
             <p className="school-http-note">Requisição representada na demonstração. A sequência é calculada por <code>POST /api/school/simulations</code>.</p>
             <div className="school-http-grid">
               <div><small>REQUISIÇÃO SIMULADA</small><h3><b>{submittedOperation.method}</b> {route}</h3><pre>{step?.state?.requestBody ? pretty(step.state.requestBody) : submittedOperation.method === 'GET' || submittedOperation.method === 'DELETE' ? 'Sem corpo na requisição.' : 'Execute uma operação para acompanhar os dados.'}</pre></div>

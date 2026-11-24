@@ -75,7 +75,11 @@ public class SchoolSimulationController {
     @Operation(summary = "Listar cenários escolares de Backend")
     public List<SchoolScenario> catalog() {
         return List.of(new SchoolScenario("school-grades", "CRUD na escola",
-            "Cadastre, consulte, atualize e exclua registros de notas, acompanhando professor e secretaria."));
+            "Cadastre, consulte, atualize e exclua registros de notas, acompanhando professor e secretaria."),
+            new SchoolScenario("school-dto", "DTO e boletim escolar",
+                "Compare DTO de entrada, entidade e DTO de saída durante a emissão de um boletim."),
+            new SchoolScenario("school-validation", "Validação e tratamento de erros",
+                "Valide campos e acompanhe a tradução de exceções em respostas HTTP compreensíveis."));
     }
 
     @PostMapping("/simulations")

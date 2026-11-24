@@ -4,6 +4,9 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import MotionReveal from './motion-reveal';
+import BackendLearningContext from './backend-learning-context';
+import BackendSimulationHeading from './backend-simulation-heading';
+import useBackendQuizAccess from './use-backend-quiz-access';
 import Room from './room';
 import { drawCast, previewCast, stations } from './room-motion.mjs';
 import useSimulationPlayback from './use-simulation-playback';
@@ -86,8 +89,9 @@ export default function Simulator() {
     setNotice('');
   };
   const steps = result?.steps || [];
-  const { cursor, step, last, playing: play, previous, jump, toggle: togglePlayback, reset, pause } =
+  const { cursor, step, last, playing: play, previous, jump, toggle: togglePlayback, reset, pause, completed } =
     useSimulationPlayback(steps, config.speed, setInspect);
+  const quizUnlocked = useBackendQuizAccess(completed);
   const pos = cursor.index;
   const actor = inspect || step?.actor || 'client',
     station = stations[actor] || stations.client;
@@ -164,7 +168,7 @@ export default function Simulator() {
     <Link href="/#modulos" className="sim-back">Módulos</Link>
   </header>
  <main>{tab === 'Cenários' ? <><div className="intro"><p>Framework Spring Boot</p><h1>Cenários</h1></div>{catalogError ? <p role="alert">Cenários indisponíveis. <button onClick={() => setAttempt(a => a + 1)}>Tentar novamente</button></p> : !catalog ? <p>Carregando exemplos…</p> : catalog.some(s => s.id === 'create-product') ? <><h2>{catalog.find(s => s.id === 'create-product').title}</h2><p>Escolha o cenário da requisição.</p><div className="cards">{presets.map(p => <button className="card" key={p.name} onClick={() => choose(p)}><small>POST /produtos</small><strong>{p.name}</strong><span>{p.description}</span><b>HTTP {p.status} ↗</b></button>)}</div></> : <p>Nenhum exemplo disponível.</p>}</> : <>
- <div className="intro"><p>Spring Boot <span>/</span> APIs e requisições HTTP</p><h1>Cadastro de produtos</h1><div>Explore o caminho de uma requisição, do cliente ao banco de dados.</div></div>
+ <BackendSimulationHeading scenario="products" title="Cadastro de produtos" eyebrow="Spring Boot / APIs e requisições HTTP" description="Explore o caminho de uma requisição, do cliente ao banco de dados." className="intro" unlocked={quizUnlocked} onOpen={pause} />
  <div className="grid"><MotionReveal as="section" className="stage" delay={0.08}><div className="bar"><h2>Sala de simulação</h2><span className="status"><i />{busy ? 'Carregando' : play ? 'Reproduzindo' : result ? 'Em revisão' : 'Pronta'}</span></div>
  <Room previous={inspect ? null : previous} cast={cast} clock={cursor.clock} active={actor} playing={play} bubble={bubble} onInspect={a => {
               setInspect(a);
@@ -178,8 +182,8 @@ export default function Simulator() {
  {side === 'Entrada' ? <><label>Nome do produto<input value={config.name} onChange={e => update('name', e.target.value)} /></label><label>Preço (R$)<input type="number" step="any" required value={config.price} onChange={e => update('price', e.target.value)} /></label></> : <label>Falha simulada<select value={config.failure} onChange={e => update('failure', e.target.value)}><option value="none">Nenhuma</option><option value="database-unavailable">Banco indisponível</option></select></label>}
  <label>Nível da legenda<select value={config.level} onChange={e => update('level', e.target.value)}><option value="basic">Iniciante</option><option value="technical">Técnico</option></select></label>
  <button className="primary" disabled={busy}>{busy ? 'Iniciando…' : '▶  Executar exemplo'}</button><button className="save" type="button" onClick={save}>Salvar configuração</button>{(error || notice) && <p role="status" className="notice">{error || notice}</p>}</form></MotionReveal></div>
- <MotionReveal as="section" className="inspector" delay={0.08}><div className="bar"><h2>Inspetor</h2><div className="tabs">{['HTTP', 'Código', 'Estado', 'Histórico'].map(t => <button key={t} aria-pressed={detail === t} onClick={() => setDetail(t)}>{t}</button>)}</div></div>
- {detail === 'HTTP' ? <div className="split"><div><small>REQUISIÇÃO</small><h3><b>POST</b> /produtos</h3><pre>{pretty(sent || {
+ <MotionReveal as="section" className="inspector" delay={0.08}><div className="bar"><h2>Inspetor</h2><div className="tabs">{['HTTP', 'Código', 'Estado', 'Histórico', 'Contexto/Objetivo'].map(t => <button key={t} aria-pressed={detail === t} onClick={() => setDetail(t)}>{t}</button>)}</div></div>
+ {detail === 'Contexto/Objetivo' ? <BackendLearningContext scenario="products" /> : detail === 'HTTP' ? <div className="split"><div><small>REQUISIÇÃO</small><h3><b>POST</b> /produtos</h3><pre>{pretty(sent || {
                   name: config.name,
                   price: Number(config.price)
                 })}</pre></div><div><small>RESPOSTA SIMULADA</small><h3>{result && last ? 'HTTP ' + result.simulatedResponse.status : 'Aguardando resposta'}</h3><pre>{result && last ? pretty(result.simulatedResponse.body) : 'A resposta aparece ao final do fluxo.'}</pre></div></div> : detail === 'Código' ? <div className="readout"><small>{step?.code?.file || 'Código Java'}</small>{step?.code ? <pre>{step.code.source.split('\n').map((l, i) => <div className={step.code.line === i + 1 ? 'current' : ''} key={i}>{String(i + 1).padStart(2, ' ')}  {l || ' '}</div>)}</pre> : <p>Esta etapa não possui trecho Java associado.</p>}</div> : detail === 'Estado' ? <pre className="readout">{step ? pretty(step.state) : 'Execute o exemplo para inspecionar os dados.'}</pre> : <div className="readout">{steps.length ? <ol>{steps.slice(0, pos + 1).map((s, i) => <li key={i}><button onClick={() => jump(i)}>{stations[s.actor]?.[0] || s.actor} · {s.bubble}</button></li>)}</ol> : 'O histórico será preenchido durante a execução.'}</div>}</MotionReveal></>}</main></div>;
