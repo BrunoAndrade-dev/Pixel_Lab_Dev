@@ -9,6 +9,7 @@ O NARA Lab é uma plataforma educativa de simulações interativas. Em uma sala 
 - **CRUD na escola**: aluno, professor e secretaria demonstram cadastro, consulta, atualização e exclusão de registros de notas, com histórico detalhado em níveis iniciante e técnico.
 - **DTO e boletim escolar**: compare DTO de entrada, entidade e DTO de saída; o boletim exibe somente os campos selecionados para a resposta.
 - **Validação e tratamento de erros**: acompanhe a conferência dos campos, a interrupção por exceção e a preparação de uma resposta orientativa, com exemplos de 400, 404 e 503.
+- **Persistência com Spring Data JPA**: acompanhe a gravação de uma nota, veja a linha em uma ficha da tabela e consulte o registro em uma nova sessão.
 - Módulo **Inteligência Artificial** com a **Biblioteca**, sobre respostas apoiadas em documentação, e a **Hamburgueria**, sobre como a precisão de um prompt muda o atendimento.
 - Laboratório em pixel art inspirado na sala real, com estações de trabalho, data center e dez sprites da equipe. Cada execução sorteia seis integrantes distintos, um por papel. Os personagens caminham para entregar o envelope, e Service, Repository e Entity têm postos sentados.
 - Configuração de nome, preço, falha simulada, nível da legenda e velocidade. As preferências podem ser salvas no navegador.
@@ -18,7 +19,7 @@ O NARA Lab é uma plataforma educativa de simulações interativas. Em uma sala 
 
 ## Módulo Backend · Guia das simulações
 
-O catálogo em `/modulos/backend` reúne quatro simulações. Cada uma tem suas próprias entradas, objetivo e quiz. As cenas, os trechos Java e os resultados HTTP são representações didáticas; não executam o código exibido nem alteram um banco acadêmico real.
+O catálogo em `/modulos/backend` reúne cinco simulações. Cada uma tem suas próprias entradas, objetivo e quiz. As cenas, os trechos Java e os resultados HTTP são representações didáticas; não executam o código exibido nem alteram um banco acadêmico real.
 
 ### Recursos disponíveis em todas as simulações
 
@@ -151,6 +152,15 @@ O código didático apresenta `@Valid`, constraints, `@RestControllerAdvice` e `
 
 **Contexto e fixação:** a explicação introdutória define as regras de campos, exceções e tratamento centralizado em linguagem simples. O quiz verifica a interpretação dos status, dos campos da resposta e da diferença entre um erro didático e uma falha real do simulador.
 
+### Backend · Persistência com Spring Data JPA
+
+Abra **Backend → Persistência com Spring Data JPA** (`/modulos/backend/persistencia-jpa`). Informe aluno, disciplina e nota de 0 a 10. A sequência valida a entrada, prepara a entidade, mostra `save` e abre a ficha da tabela `notas` quando a gravação é confirmada. A sessão de leitura começa com a entidade fora do contexto, conserva a linha e usa `findById` com o ID produzido no cadastro.
+
+- O inspetor mostra **Estado**, **HTTP**, **Código**, **SQL**, **Histórico** e **Contexto/Objetivo**. Na aba SQL, o `INSERT` e o `SELECT` usam parâmetros e aparecem nas etapas correspondentes.
+- O caminho normal representa `POST /notas` com `201` seguido de `GET /notas/{id}` com `200`. Dados inválidos retornam `400` antes de criar a entidade. Banco indisponível retorna `503`, abre a ficha vazia e encerra a escrita sem consulta.
+- A ficha acompanha o snapshot ao voltar ou avançar. Cada execução começa com a tabela didática vazia. O cenário calcula os estados em memória e usa Java e SQL ilustrativos.
+- Contexto/Objetivo explica persistência, mapeamento, chave primária e sessões. O quiz de oito questões é liberado após a reprodução completa.
+
 ### Inteligência Artificial
 
 - **Biblioteca**. Um integrante da equipe pergunta qual status o cadastro simula quando o banco fica indisponível. O assistente consulta a documentação e mostra a evidência. A opção de fonte indisponível demonstra como comunicar que o status ainda não pôde ser confirmado.
@@ -185,7 +195,7 @@ npm ci
 npm run dev
 ~~~
 
-Acesse [NARA Lab em localhost:3000](http://localhost:3000), abra **Acessar módulos** e escolha **Backend** para ver as quatro simulações ou **Inteligência Artificial** para os cenários de IA. O Next.js encaminha as chamadas da API para o Spring em `http://127.0.0.1:8080` por padrão. Para outro endereço, defina a variável `SPRING_API_URL` no frontend.
+Acesse [NARA Lab em localhost:3000](http://localhost:3000), abra **Acessar módulos** e escolha **Backend** para ver as cinco simulações ou **Inteligência Artificial** para os cenários de IA. O Next.js encaminha as chamadas da API para o Spring em `http://127.0.0.1:8080` por padrão. Para outro endereço, defina a variável `SPRING_API_URL` no frontend.
 
 Para verificar o projeto, execute `mvn test` em `backend/` e `npm run build` em `frontend/`.
 
@@ -209,11 +219,13 @@ No Swagger, abra `POST /api/simulations`, clique em **Try it out**, escolha um e
 - `GET /api/ia/scenarios` lista os cenários `biblioteca` e `hamburgueria`.
 - `POST /api/ia/simulations` recebe `scenario` e retorna o assistente sorteado, as etapas e o resultado. Na biblioteca, use `sourceAvailable: false` para simular falha de acesso à documentação. O Swagger oferece exemplos para os dois cenários.
 
-- `GET /api/school/scenarios` lista os cenários escolares `school-grades`, `school-dto` e `school-validation`.
+- `GET /api/school/scenarios` lista os cenários escolares `school-grades`, `school-dto`, `school-validation` e `school-jpa`.
 - `POST /api/school/simulations` calcula o CRUD a partir de `operation`, `inputs`, `records`, `nextId` e `failure`. HTTP `200` pertence ao cálculo; `simulatedResponse.status` representa o resultado didático. IDs/configurações inválidas geram HTTP `400` na própria API. O navegador envia o snapshot da sessão; não há armazenamento acadêmico real.
 - `POST /api/school/dto/simulations` recebe `inputs` (`student`, `subject`, `grade`) e `failure` (`none` ou `database-unavailable`). Retorna `schemaVersion`, `steps` e `simulatedResponse`. Cada etapa inclui os snapshots `inputDto`, `entity`, `persisted` e `outputDto`, além de movimento, código, legenda e histórico nos dois níveis. A API retorna HTTP `200` quando calcula a demonstração; configurações inválidas retornam HTTP `400` na própria API. O Swagger oferece exemplos de sucesso, nota inválida e indisponibilidade.
 
 O endpoint `POST /api/school/validation/simulations` recebe `operation` (`create` ou `read`), `inputs` e `failure` (`none` ou `database-unavailable`). A criação usa aluno, disciplina e nota; a consulta usa ID inteiro positivo. Retorna `schemaVersion`, `steps` e `simulatedResponse`, com snapshots de `requestBody`, `records`, `fieldErrors`, `exception`, `handled`, `responseBody` e `responseStatus`. Os HTTP didáticos são `201/200/400/404/503`; a API retorna HTTP `200` para sequências calculadas e HTTP `400` para configurações inválidas. O Swagger traz exemplos.
+
+`POST /api/school/jpa/simulations` recebe `inputs` (`student`, `subject`, `grade`) e `failure` (`none` ou `database-unavailable`). Cada etapa contém o estado da sessão, a entidade, as linhas confirmadas, o ID de consulta e as respostas didáticas de escrita e leitura quando disponíveis. O SQL e seus parâmetros aparecem nas etapas correspondentes. `simulatedResponse` representa o desfecho da sequência.
 
 ## Créditos de interface
 
@@ -232,6 +244,6 @@ O catálogo já exibe as áreas abaixo. Os conteúdos indicados são propostas i
 | DevOps | Simular as etapas de build, teste e entrega de uma aplicação |
 | Metodologias Ágeis | Acompanhar um fluxo Kanban, com limites de trabalho em andamento e bloqueios |
 
-No Backend, a evolução prevista inclui novos fluxos HTTP, inicialização do Spring e uma demonstração específica de persistência. Em Inteligência Artificial, as próximas demonstrações aprofundarão agentes, ferramentas, skills e harness. Consulte o [contexto técnico do NARA Lab](context.md) para o contrato da API, a lógica de reprodução e o inventário dos sprites.
+No Backend, a evolução prevista inclui relacionamentos entre entidades, transações e inicialização do Spring. Em Inteligência Artificial, as próximas demonstrações aprofundarão agentes, ferramentas, skills e harness. Consulte o [contexto técnico do NARA Lab](context.md) para o contrato da API, a lógica de reprodução e o inventário dos sprites.
 
 As próximas simulações, inclusive em outros módulos, seguirão o padrão de animações com movimento reduzido, legendas iniciante/técnica, histórico explicativo, Contexto/Objetivo, inspetor pertinente ao tema e quiz de 6 a 12 questões com liberação após a visualização, meta de 75% e revisão orientada pelos erros. Esses recursos de contexto e quiz estão implementados atualmente no Backend; os cenários de IA existentes ainda não foram migrados.

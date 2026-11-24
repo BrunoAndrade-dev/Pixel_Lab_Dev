@@ -12,6 +12,7 @@ const scenarios = [
   { href: '/modulos/backend/crud-escolar', image: '/scenarios/school/school-room.webp', label: 'Simulação disponível', title: 'CRUD na escola', description: 'Cadastre, consulte, atualize e exclua notas, acompanhando a interação entre sala de aula e secretaria.' },
   { href: '/modulos/backend/dto-escolar', image: '/scenarios/school/school-room.webp', label: 'Simulação disponível', title: 'DTO e boletim escolar', description: 'Compare os dados de entrada, a entidade e a resposta da aplicação, representada por um boletim escolar.' },
   { href: '/modulos/backend/validacao-e-erros', image: '/scenarios/school/school-room.webp', label: 'Simulação disponível', title: 'Validação e tratamento de erros', description: 'Descubra como validar campos, identificar problemas e devolver respostas claras sem alterar os dados em caso de falha.' },
+  { href: '/modulos/backend/persistencia-jpa', image: '/scenarios/school/school-room.webp', label: 'Simulação disponível', title: 'Persistência com Spring Data JPA', description: 'Veja a nota virar uma linha na tabela e recupere o registro em uma nova sessão.' },
 ];
 
 export default function BackendModulePage() {

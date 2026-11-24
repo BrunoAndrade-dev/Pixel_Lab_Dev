@@ -1,7 +1,9 @@
 import './backend-learning-context.css';
+import { jpaLesson } from './school-jpa-content.mjs';
 import { validationLesson } from './school-validation-content.mjs';
 
 const lessons = {
+  jpa: jpaLesson,
   validation: validationLesson,
   products: {
     title: 'Como um cadastro funciona por dentro?',

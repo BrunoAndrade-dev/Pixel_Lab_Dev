@@ -20,6 +20,12 @@
 .dto-report th:last-child, .dto-report td:last-child { text-align: right; }
 .dto-report td:last-child { color: #785015; font-size: 1.35rem; font-weight: 700; }
 .dto-report footer { margin-top: 18px; color: #766a58; font-size: .73rem; line-height: 1.6; }
+.jpa-sheet table { margin-top: 16px; table-layout: fixed; }
+.jpa-sheet thead th:first-child { width: 14%; }
+.jpa-sheet thead th:last-child { width: 20%; }
+.jpa-sheet tbody th { background: transparent; border-top: 0; }
+.jpa-sheet .jpa-selected-row { background: #fff2d1; }
+.jpa-sheet .jpa-empty-row td { text-align: left; font-size: .9rem; font-weight: 400; }
 .dto-report-placeholder { display: flex; align-items: center; gap: 16px; max-width: 560px; min-height: 156px; margin: auto; padding: 24px; border: 1px dashed #cdb88e; border-radius: 8px; color: #76603b; }
 .dto-report-placeholder > span { font-size: 2.3rem; }
 .dto-report-placeholder strong { font-size: 1rem; }
@@ -31,3 +37,7 @@
 .dto-persistence { margin: 12px 0 0; color: #785015; font-size: .8rem; }
 @media (max-width: 900px) { .dto-data-grid { grid-template-columns: 1fr; } .dto-field-list { min-height: 0; } }
 @media (max-width: 640px) { .dto-concept-strip { grid-template-columns: 1fr; gap: 8px; } .dto-concept-strip > div { padding: 12px; } .dto-report-area { padding: 16px; } .dto-report { padding: 18px; } .dto-report header { flex-wrap: wrap; } }
+@media (max-width: 480px) {
+  .jpa-sheet td, .jpa-sheet th { padding-inline: 4px; }
+  .jpa-sheet td, .jpa-sheet td:last-child { font-size: .875rem; }
+}

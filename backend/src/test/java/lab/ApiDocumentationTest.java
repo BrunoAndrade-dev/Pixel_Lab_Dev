@@ -43,6 +43,8 @@ class ApiDocumentationTest {
             .andExpect(jsonPath("$.paths['/api/school/dto/simulations'].post.responses.keys()").value(containsInAnyOrder("200", "400")))
             .andExpect(jsonPath("$.paths['/api/school/validation/simulations'].post.tags[0]").value(module))
             .andExpect(jsonPath("$.paths['/api/school/validation/simulations'].post.responses.keys()").value(containsInAnyOrder("200", "400")))
+            .andExpect(jsonPath("$.paths['/api/school/jpa/simulations'].post.tags[0]").value(module))
+            .andExpect(jsonPath("$.paths['/api/school/jpa/simulations'].post.responses.keys()").value(containsInAnyOrder("200", "400")))
             .andExpect(jsonPath("$.paths['/api/school/simulations'].post.responses.keys()").value(containsInAnyOrder("200", "400")))
             .andExpect(jsonPath(post + ".responses.keys()").value(containsInAnyOrder("200", "400")))
             .andExpect(jsonPath(post + ".requestBody.required").value(true))
