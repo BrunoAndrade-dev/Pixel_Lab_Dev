@@ -1,0 +1,43 @@
+.backend-heading-row { display: flex; align-items: center; flex-wrap: wrap; gap: 18px 28px; }
+.backend-heading-row h1 { min-width: 0; }
+.backend-quiz-access { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; max-width: 270px; }
+.backend-quiz-trigger { display: inline-flex; align-items: center; gap: 9px; min-height: 44px; padding: 11px 17px; border: 1px solid #b98a37; border-radius: 10px; color: #33291e; background: #fff2d1; font-size: .9rem; font-weight: 700; }
+.backend-quiz-trigger:disabled { opacity: .7; background: #f4efe6; border-color: #d7cab6; }
+.backend-quiz-access > small { color: #76603b; font-size: .75rem; line-height: 1.5; }
+.backend-quiz-dialog { width: min(800px, calc(100% - 28px)); max-height: calc(100dvh - 40px); padding: clamp(18px, 4vw, 32px); border: 1px solid #d7cab6; border-radius: 18px; background: #fffefa; color: #33291e; box-shadow: 0 24px 90px #241d1440; overscroll-behavior: contain; }
+.backend-quiz-dialog::backdrop { background: #211b14a6; }
+.backend-quiz-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; }
+.backend-quiz-top small { color: #8b570a; font-size: .7rem; font-weight: 700; letter-spacing: .08em; }
+.backend-quiz-dialog h2 { margin: 6px 0 0; font-size: clamp(1.3rem, 3vw, 1.8rem); line-height: 1.35; letter-spacing: -.035em; }
+.backend-quiz-close { flex-shrink: 0; width: 44px; height: 44px; border: 1px solid #d7cab6; border-radius: 9px; background: #fff; }
+.backend-quiz-intro { margin: 18px 0; color: #605548; font-size: .9rem; line-height: 1.7; }
+.backend-quiz-dialog form { display: block; padding: 0; }
+.backend-quiz-progress { padding-block: 12px; color: #76603b; font-size: .85rem; }
+.backend-quiz-question { min-width: 0; margin: 16px 0 26px; padding: 18px; border: 1px solid #e1d8ca; border-radius: 12px; }
+.backend-quiz-question legend { max-width: 100%; padding: 0 7px; color: #33291e; font-size: 1rem; font-weight: 700; line-height: 1.6; }
+.backend-quiz-question legend > span { display: block; color: #8b570a; font-size: .75rem; }
+.backend-quiz-question label { display: flex; align-items: flex-start; gap: 10px; margin-top: 10px; padding: 12px; border: 1px solid #e1d8ca; border-radius: 8px; background: #fff; font-size: .9rem; font-weight: 400; line-height: 1.6; cursor: pointer; }
+.backend-quiz-question input { flex: 0 0 auto; width: 18px; height: 18px; margin: 3px 0 0; accent-color: #98641b; }
+.backend-quiz-question label:has(input:checked) { border-color: #98641b; background: #fff7e5; }
+.backend-quiz-question label:has(input:focus-visible) { outline: 3px solid #995600; outline-offset: 2px; }
+.backend-quiz-question:disabled label { cursor: default; opacity: 1; }
+.backend-quiz-question label.is-correct { border-color: #52805d; background: #eff7f0; }
+.backend-quiz-question label.is-wrong { border-color: #b26750; background: #fff1ed; }
+.backend-quiz-question label small { display: block; font-size: .75rem; font-weight: 700; }
+.backend-quiz-explanation { margin: 16px 0 0; color: #514536; font-size: .9rem; line-height: 1.7; }
+.backend-quiz-result { padding: 20px; border: 1px solid #d4b77a; border-radius: 12px; background: #fff7e5; }
+.backend-quiz-result.is-passed { border-color: #80a187; background: #eff7f0; }
+.backend-quiz-result h3 { margin: 0; font-size: 1.2rem; line-height: 1.5; }
+.backend-quiz-result h4 { margin: 20px 0 8px; font-size: 1rem; }
+.backend-quiz-result p, .backend-quiz-result li { font-size: .9rem; line-height: 1.75; }
+.backend-quiz-result ul { padding-left: 20px; }
+.backend-quiz-result li + li { margin-top: 10px; }
+.backend-quiz-actions { display: flex; flex-wrap: wrap; gap: 12px; }
+.backend-quiz-actions button { min-height: 44px; padding: 11px 17px; border: 1px solid #33291e; border-radius: 9px; color: #fffefa; background: #33291e; font-weight: 700; }
+.backend-quiz-actions button.backend-quiz-secondary { background: #fff; color: #44382a; border-color: #d7cab6; }
+.backend-quiz-error { color: #8b3021; font-size: .9rem; }
+/* O cadastro tem regras genéricas para formulários; o quiz mantém seu próprio layout. */
+.simulator .backend-quiz-dialog form { display: block; padding: 0; }
+.simulator .backend-quiz-question label { display: flex; font-size: .9rem; }
+.simulator .backend-quiz-question input { padding: 0; width: 18px; min-width: 18px; }
+@media (max-width: 640px) { .backend-heading-row { gap: 8px; } .backend-quiz-access { max-width: 100%; margin-bottom: 14px; } .backend-quiz-dialog { max-height: calc(100dvh - 20px); } .backend-quiz-question { padding: 12px; } }

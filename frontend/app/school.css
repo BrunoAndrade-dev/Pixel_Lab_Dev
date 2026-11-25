@@ -1,0 +1,97 @@
+.school-page { max-width: 1432px; margin-inline: auto; padding: 24px var(--page-gutter) 64px; }
+.school-back { color: #724500; font-size: .9rem; text-underline-offset: 4px; }
+.school-intro { margin: 32px 0 28px; }
+.school-eyebrow { color: #a65a00; font-size: .85rem; font-weight: 700; }
+.school-intro h1 { margin: 8px 0 16px; font-size: clamp(2.55rem, 5vw, 4.3rem); line-height: 1.02; letter-spacing: -.07em; }
+.school-intro > p:last-child { color: #605548; max-width: 46rem; }
+.school-viewport { overflow-x: auto; overscroll-behavior-x: contain; border: 1px solid #e6dfd1; border-radius: 18px; background: #fffcf5; }
+.school-viewport:focus-visible { outline: 3px solid #995600; outline-offset: 3px; }
+.school-room { position: relative; min-width: 780px; aspect-ratio: 2 / 1; background: url('/scenarios/school/school-room.webp') center / 100% 100% no-repeat; }
+.school-room canvas { display: block; width: 100%; height: 100%; }
+.school-zone { position: absolute; top: 3%; padding: 5px 12px; border: 1px solid #e6dfd1; border-radius: 999px; color: #504028; background: #fffcf5f2; font-size: .85rem; font-weight: 700; }
+.school-zone-classroom { left: 16%; }
+.school-zone-office { right: 8%; }
+.school-cast { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 22px 0 0; padding: 0; list-style: none; }
+.school-cast li { padding: 20px; border: 1px solid #e6dfd1; border-radius: 14px; background: #fffcf5; }
+.school-cast h2 { margin: 0 0 8px; font-size: 1.1rem; }
+.school-cast p, .school-preview-note { margin: 0; color: #605548; line-height: 1.55; }
+.school-preview-note { margin-top: 24px; font-size: .9rem; }
+.school-scroll-hint { display: none; }
+@media (max-width: 780px) {
+  .school-scroll-hint { display: block; color: #605548; font-size: .85rem; }
+  .school-cast { grid-template-columns: 1fr; }
+}
+
+/* Controles e inspetor da simulação escolar. */
+.school-simulation-grid { display: grid; grid-template-columns: minmax(0, 1fr) 310px; align-items: start; gap: 22px; }
+.school-stage, .school-config, .school-inspector { min-width: 0; overflow: hidden; border: 1px solid #e6dfd1; border-radius: 16px; background: #fff; }
+.school-panel-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 20px; border-bottom: 1px solid #e6dfd1; }
+.school-panel-bar h2 { margin: 0; font-size: 1.1rem; line-height: 1.3; }
+.school-run-status { font-size: .78rem; color: #76603b; white-space: nowrap; }
+.school-stage .school-viewport { border-inline: 0; border-radius: 0; }
+.school-stage .school-room { min-width: 700px; }
+.school-caption { padding: 18px 20px; border-top: 1px solid #e6dfd1; background: #fffcf5; }
+.school-caption small { display: block; color: #8b570a; font-weight: 700; }
+.school-caption p { margin: 7px 0 0; min-height: 2.9em; color: #3f3528; line-height: 1.55; }
+.school-playbar { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding: 13px 16px; border-top: 1px solid #e6dfd1; }
+.school-playbar button { min-width: 40px; min-height: 40px; padding: 6px; border: 1px solid #ded3c2; border-radius: 8px; background: #fffaf0; }
+.school-playbar button.school-play { min-width: 54px; color: #241d14; background: #ffcc62; border-color: #dcaa42; }
+.school-playbar button:disabled { cursor: default; opacity: .4; }
+.school-step-counter { margin-inline: 4px; font-size: .85rem; font-variant-numeric: tabular-nums; color: #605548; }
+.school-playbar label { display: flex; align-items: center; gap: 8px; margin-left: auto; font-size: .8rem; }
+.school-playbar select { padding: 7px; border: 1px solid #ded3c2; border-radius: 7px; background: #fff; }
+.school-config form { display: flex; flex-direction: column; gap: 15px; padding: 18px; }
+.school-config form > label { display: flex; flex-direction: column; gap: 6px; color: #44382a; font-size: .85rem; font-weight: 700; }
+.school-config form input, .school-config form select { width: 100%; min-width: 0; min-height: 42px; padding: 9px 10px; border: 1px solid #d7cab6; border-radius: 8px; background: #fff; font-weight: 400; }
+.school-tabs { display: flex; flex-wrap: wrap; gap: 5px; }
+.school-tabs button { min-height: 38px; padding: 7px 11px; border: 1px solid #e6dfd1; border-radius: 7px; background: #fff; color: #605548; font-size: .85rem; }
+.school-tabs button[aria-pressed='true'] { color: #241d14; border-color: #b98a37; background: #fff2d1; font-weight: 700; }
+.school-field-help { margin-top: -7px; color: #766a58; font-size: .76rem; line-height: 1.45; }
+.school-config-note, .school-message { margin: 0; padding: 11px 12px; border-radius: 8px; color: #665335; background: #fff8e8; font-size: .8rem; line-height: 1.5; }
+.school-error { color: #8b3021; background: #fff1ed; border: 1px solid #ebc4b8; }
+.school-primary, .school-save { width: 100%; min-height: 44px; border: 1px solid #241d14; border-radius: 9px; font-size: .87rem; font-weight: 700; }
+.school-primary { background: #241d14; color: #fffaf0; }
+.school-save { background: #fff; color: #605548; border-color: #d7cab6; }
+.school-primary:hover:not(:disabled) { background: #463521; }
+.school-save:hover { background: #fff8e8; }
+.school-inspector { margin-top: 24px; }
+.school-inspector-bar { flex-wrap: wrap; }
+.school-inspector-content { padding: 22px; }
+.school-http-note { margin: 0 0 20px; color: #766a58; font-size: .85rem; line-height: 1.55; }
+.school-http-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.school-http-grid > div { min-width: 0; }
+.school-http-grid small { color: #8b570a; font-size: .72rem; font-weight: 700; letter-spacing: .04em; }
+.school-inspector h3 { margin: 8px 0 12px; font-size: 1rem; overflow-wrap: anywhere; }
+.school-inspector pre { max-height: 440px; overflow: auto; margin: 0; padding: 16px; border: 1px solid #e6dfd1; border-radius: 9px; background: #fffcf5; font: .8rem/1.65 monospace; tab-size: 2; }
+.school-code i { display: inline-block; width: 3ch; margin-right: 2ch; color: #9b8d78; font-style: normal; user-select: none; }
+.school-code-current { display: inline-block; min-width: 100%; background: #ffe7aa; }
+.school-table-scroll { overflow-x: auto; }
+.school-records { width: 100%; border-collapse: collapse; text-align: left; font-size: .9rem; }
+.school-records caption { padding: 0 0 12px; text-align: left; font-weight: 700; }
+.school-records th, .school-records td { padding: 13px 15px; border-bottom: 1px solid #e6dfd1; }
+.school-records th { color: #605548; background: #fffcf5; font-size: .8rem; }
+.school-records td { overflow-wrap: anywhere; }
+.school-next-id, .school-session-note { margin: 18px 0 0; color: #766a58; font-size: .8rem; line-height: 1.55; }
+.school-empty-state { padding: 24px; border: 1px dashed #d7cab6; border-radius: 10px; text-align: center; color: #766a58; }
+.school-history { display: flex; flex-direction: column; gap: 14px; margin: 0; padding: 0; list-style: none; }
+.school-history li { padding: 18px; border: 1px solid #e6dfd1; border-radius: 11px; }
+.school-history li.is-current { border-color: #b98a37; background: #fffcf5; }
+.school-history button { display: flex; flex-direction: column; gap: 6px; width: 100%; padding: 0; border: 0; background: transparent; color: #241d14; text-align: left; }
+.school-history button > span { color: #8b570a; font-size: .76rem; }
+.school-history button > strong { font-size: .95rem; line-height: 1.5; }
+.school-history p { margin: 13px 0; color: #605548; font-size: .9rem; line-height: 1.65; white-space: pre-line; }
+.school-history small { color: #85745b; font-size: .75rem; }
+@media (max-width: 1100px) {
+  .school-simulation-grid { grid-template-columns: minmax(0, 1fr); }
+  .school-config form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .school-config form .school-tabs, .school-config form .school-field-help, .school-config form .school-config-note, .school-config form .school-message { grid-column: 1 / -1; }
+}
+@media (max-width: 640px) {
+  .school-config form { display: flex; }
+  .school-panel-bar { padding: 14px; }
+  .school-run-status { font-size: .7rem; }
+  .school-caption { padding: 16px; }
+  .school-inspector-content { padding: 16px; }
+  .school-http-grid { grid-template-columns: 1fr; }
+  .school-playbar label { margin-left: 0; }
+}
