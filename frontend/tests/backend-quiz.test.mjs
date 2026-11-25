@@ -4,7 +4,7 @@ import { backendQuizzes, evaluateQuiz } from '../app/backend-quiz-data.mjs';
 import { hasCompletedPlayback } from '../app/playback-progress.mjs';
 
 test('cada cenário tem de 6 a 12 perguntas com resposta e orientação de estudo válidas', () => {
-  assert.deepEqual(Object.keys(backendQuizzes).sort(), ['crud', 'dto', 'products', 'validation']);
+  assert.deepEqual(Object.keys(backendQuizzes).sort(), ['boot', 'crud', 'dto', 'jpa', 'products', 'relationships', 'transactions', 'validation']);
   for (const questions of Object.values(backendQuizzes)) {
     assert.ok(questions.length >= 6 && questions.length <= 12);
     assert.equal(new Set(questions.map(item => item.question)).size, questions.length);

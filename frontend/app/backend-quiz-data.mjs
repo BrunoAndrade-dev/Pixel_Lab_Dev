@@ -1,6 +1,14 @@
 import { validationQuiz } from './school-validation-content.mjs';
+import { jpaQuiz } from './school-jpa-content.mjs';
+import { relationshipQuiz } from './school-relationship-content.mjs';
+import { transactionQuiz } from './school-transaction-content.mjs';
+import { bootQuiz } from './boot-content.mjs';
 
 export const backendQuizzes = {
+  boot: bootQuiz,
+  transactions: transactionQuiz,
+  relationships: relationshipQuiz,
+  jpa: jpaQuiz,
   validation: validationQuiz,
   products: [
     { question: 'Qual é a principal função do backend neste cadastro?', options: ['Escolher a cor do botão.', 'Receber o pedido, aplicar regras e trabalhar com os dados.', 'Desenhar os personagens.', 'Substituir o navegador do usuário.'], answer: 1, topic: 'Papel do backend', study: 'Revise a introdução de Contexto/Objetivo e diferencie interface, backend e armazenamento.', explanation: 'O backend realiza o trabalho do cadastro: recebe a solicitação, confere as regras e solicita a persistência.' },

@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import SiteHeader from '../../../site-header';
-import SchoolDtoSimulator from '../../../school-dto-simulator';
+import SchoolGradeSimulator from '../../../school-grade-simulator';
 import '../../../landing.css';
 import '../../../school.css';
 import '../../../school-dto.css';
@@ -16,7 +16,7 @@ export default function SchoolDtoPage() {
     <main className="school-page">
       <Link className="school-back" href="/modulos/backend">← Simulações de Backend</Link>
 
-      <SchoolDtoSimulator />
+      <SchoolGradeSimulator scenario="dto" />
     </main>
   </div>;
 }

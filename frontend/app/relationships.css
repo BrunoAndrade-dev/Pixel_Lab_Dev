@@ -1,0 +1,21 @@
+.relationship-simulation { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
+.relationship-simulation > .school-config form { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.relationship-simulation > .school-config .school-tabs, .relationship-simulation > .school-config .school-config-note, .relationship-simulation > .school-config .school-message { grid-column: 1 / -1; }
+.relationship-viewport { overflow-x: auto; overscroll-behavior-x: contain; background: #fff9ef; }
+.relationship-room { position: relative; min-width: 1180px; aspect-ratio: 3 / 1; background: url('/scenarios/school/relationships-room.webp') center / 100% 100% no-repeat; }
+.relationship-room canvas { width: 100%; height: 100%; display: block; }
+.relationship-zone { position: absolute; top: 2%; padding: 5px 10px; border: 1px solid #ddc99e; border-radius: 999px; background: #fffaf0f5; color: #62451d; font-size: .75rem; font-weight: 700; transform: translateX(-50%); white-space: nowrap; }
+.zone-a { left: 21%; } .zone-b { left: 54%; } .zone-office { left: 85%; }
+.relationship-scroll-hint { margin: 0; padding: 8px 16px; background: #fffcf5; color: #76603b; font-size: .8rem; }
+.relationship-speech { --speaker-x: 20.72%; --speaker-y: 31.08%; position: absolute; z-index: 2; left: clamp(130px, var(--speaker-x), calc(100% - 130px)); bottom: calc(100% - var(--speaker-y) + 10px); transform: translateX(-50%); box-sizing: border-box; width: max-content; max-width: 240px; padding: 9px 12px; border: 1px solid #c99b55; border-radius: 12px; background: #fffdf7; color: #44382a; box-shadow: 0 4px 12px #5339141a; font-size: .75rem; line-height: 1.45; pointer-events: none; }
+.relationship-speech::after { content: ''; position: absolute; left: 50%; bottom: -6px; width: 10px; height: 10px; background: #fffdf7; border-right: 1px solid #c99b55; border-bottom: 1px solid #c99b55; transform: translateX(-50%) rotate(45deg); }
+.relationship-speech strong, .relationship-speech span { display: block; }
+.relationship-speech strong { margin-bottom: 3px; color: #8b570a; font-size: .68rem; }
+.relationship-occupancy { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 12px 20px; background: #fffcf5; }
+.relationship-occupancy > div { padding: 10px; border: 1px solid #e6dfd1; border-radius: 8px; font-size: .83rem; }
+.relationship-occupancy > div.is-selected { border-color: #b98a37; background: #fff2d1; }
+.relationship-occupancy strong, .relationship-occupancy span { display: block; }
+.relationship-occupancy span { margin-top: 4px; color: #605548; }
+.relationship-class-list { list-style: none; margin: 0; padding: 0; }
+.relationship-class-list li { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; padding: 16px; border-bottom: 1px solid #e6dfd1; font-size: .9rem; }
+@media (max-width: 720px) { .relationship-simulation > .school-config form { display: flex; } .relationship-occupancy { grid-template-columns: 1fr; } }
