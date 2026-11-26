@@ -18,7 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = {"http://localhost:3000", "http://127.0.0.1:3000"})
+@CrossOrigin(origins = "${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://127.0.0.1:3000}")
 @Tag(name = "Módulo backend\\Springboot",
     description = "Simula o cadastro de produtos com Spring Boot. Consulte os cenários e acompanhe o fluxo HTTP do cliente ao banco de dados.")
 public class SimulationController {
