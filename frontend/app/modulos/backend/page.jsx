@@ -8,6 +8,9 @@ import '../../ai.css';
 export const metadata = { title: 'Backend' };
 
 const scenarios = [
+  { href: '/modulos/backend/inicializacao-spring', image: '/scenarios/boot/lanchonete.webp', label: 'Simulação disponível', title: 'Inicialização e injeção de dependência', description: 'Monte a comanda na lanchonete, conecte os componentes e confira a aplicação pronta para atender HTTP.' },
+  { href: '/modulos/backend/transacoes', image: '/scenarios/school/relationships-room.webp', label: 'Simulação disponível', title: 'Transações com @Transactional', description: 'Confirme a nova turma e o histórico juntos ou observe o rollback quando a segunda escrita falha.' },
+  { href: '/modulos/backend/relacionamentos', image: '/scenarios/school/relationships-room.webp', label: 'Simulação disponível', title: 'Relacionamentos entre entidades', description: 'Conecte turma e aluno, consulte os vínculos e acompanhe uma transferência entre duas salas de aula.' },
   { href: '/modulos/backend/cadastro-de-produtos', image: '/scenarios/nara-lab-room.png', label: 'Simulação disponível', title: 'Cadastro de produtos', description: 'Acompanhe uma requisição pelas camadas do Spring Boot, incluindo validação e falhas de persistência.' },
   { href: '/modulos/backend/crud-escolar', image: '/scenarios/school/school-room.webp', label: 'Simulação disponível', title: 'CRUD na escola', description: 'Cadastre, consulte, atualize e exclua notas, acompanhando a interação entre sala de aula e secretaria.' },
   { href: '/modulos/backend/dto-escolar', image: '/scenarios/school/school-room.webp', label: 'Simulação disponível', title: 'DTO e boletim escolar', description: 'Compare os dados de entrada, a entidade e a resposta da aplicação, representada por um boletim escolar.' },

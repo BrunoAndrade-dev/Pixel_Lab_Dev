@@ -1,8 +1,14 @@
 import './backend-learning-context.css';
 import { jpaLesson } from './school-jpa-content.mjs';
+import { relationshipLesson } from './school-relationship-content.mjs';
+import { transactionLesson } from './school-transaction-content.mjs';
+import { bootLesson } from './boot-content.mjs';
 import { validationLesson } from './school-validation-content.mjs';
 
 const lessons = {
+  boot: bootLesson,
+  transactions: transactionLesson,
+  relationships: relationshipLesson,
   jpa: jpaLesson,
   validation: validationLesson,
   products: {

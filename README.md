@@ -10,6 +10,9 @@ O NARA Lab é uma plataforma educativa de simulações interativas. Em uma sala 
 - **DTO e boletim escolar**: compare DTO de entrada, entidade e DTO de saída; o boletim exibe somente os campos selecionados para a resposta.
 - **Validação e tratamento de erros**: acompanhe a conferência dos campos, a interrupção por exceção e a preparação de uma resposta orientativa, com exemplos de 400, 404 e 503.
 - **Persistência com Spring Data JPA**: acompanhe a gravação de uma nota, veja a linha em uma ficha da tabela e consulte o registro em uma nova sessão.
+- **Relacionamentos entre entidades**: duas salas de aula, três estudantes e uma secretaria demonstram o vínculo entre aluno e turma, consultas e transferências.
+- **Transações com @Transactional**: compare duas escritas confirmadas juntas com o rollback de uma transferência quando a segunda escrita falha.
+- **Inicialização e injeção de dependência na lanchonete**: duas mesas representam configurações independentes; o pedido exato, a comanda, os beans e a entrega conectam bibliotecas, propriedades e construtores.
 - Módulo **Inteligência Artificial** com a **Biblioteca**, sobre respostas apoiadas em documentação, e a **Hamburgueria**, sobre como a precisão de um prompt muda o atendimento.
 - Laboratório em pixel art inspirado na sala real, com estações de trabalho, data center e dez sprites da equipe. Cada execução sorteia seis integrantes distintos, um por papel. Os personagens caminham para entregar o envelope, e Service, Repository e Entity têm postos sentados.
 - Configuração de nome, preço, falha simulada, nível da legenda e velocidade. As preferências podem ser salvas no navegador.
@@ -19,7 +22,7 @@ O NARA Lab é uma plataforma educativa de simulações interativas. Em uma sala 
 
 ## Módulo Backend · Guia das simulações
 
-O catálogo em `/modulos/backend` reúne cinco simulações. Cada uma tem suas próprias entradas, objetivo e quiz. As cenas, os trechos Java e os resultados HTTP são representações didáticas; não executam o código exibido nem alteram um banco acadêmico real.
+O catálogo em `/modulos/backend` reúne oito simulações. Cada uma tem suas próprias entradas, objetivo e quiz. As cenas, os trechos Java e os resultados HTTP são representações didáticas; não executam o código exibido nem alteram um banco acadêmico real.
 
 ### Recursos disponíveis em todas as simulações
 
@@ -36,7 +39,7 @@ O catálogo em `/modulos/backend` reúne cinco simulações. Cada uma tem suas p
 | **Histórico** | Revise a sequência de acontecimentos. Nos cenários escolares, cada etapa detalha o que aconteceu, o motivo e os efeitos nos dados, nos níveis iniciante e técnico. |
 | **Contexto/Objetivo** | Acesse antes de executar, ao lado de **Histórico**. Explica por que aprender o assunto, o significado dos elementos da cena, a ligação com a programação, os conhecimentos necessários e os objetivos de aprendizagem. |
 
-As entradas e os movimentos respeitam a preferência de movimento reduzido do navegador. No cenário escolar, telas estreitas permitem deslizar horizontalmente para explorar os dois ambientes.
+As entradas e os movimentos respeitam a preferência de movimento reduzido do navegador. No cenário escolar, telas estreitas permitem deslizar horizontalmente para explorar os ambientes.
 
 ### Como funciona o quiz
 
@@ -161,6 +164,60 @@ Abra **Backend → Persistência com Spring Data JPA** (`/modulos/backend/persis
 - A ficha acompanha o snapshot ao voltar ou avançar. Cada execução começa com a tabela didática vazia. O cenário calcula os estados em memória e usa Java e SQL ilustrativos.
 - Contexto/Objetivo explica persistência, mapeamento, chave primária e sessões. O quiz de oito questões é liberado após a reprodução completa.
 
+### Backend · Relacionamentos entre entidades
+
+Abra **Backend → Relacionamentos entre entidades** (`/modulos/backend/relacionamentos`). A escola possui duas salas e uma secretaria. Bruno, Júlio e Carlos começam vinculados à turma Computação A; Computação B começa vazia. Cada aluno tem seu próprio ID e uma referência à turma, representada por `classId` no estado e por `turma_id` no SQL didático.
+
+- **Transferir um aluno:** escolha o estudante e a turma de destino. A secretaria confirma a alteração do vínculo antes de o estudante caminhar pelo corredor e se sentar na outra sala. O ID e o nome permanecem iguais; os demais estudantes não mudam de turma. A relação ilustrada é `Turma @OneToMany` e `Aluno @ManyToOne`.
+- **Consultar alunos de uma turma:** veja a lista e o destaque dos estudantes associados. Uma turma existente sem alunos retorna `200` com lista vazia; uma turma inexistente retorna `404`.
+- **Falhas:** selecione a turma inexistente (ID 99) ou simule a indisponibilidade da secretaria (`503`). Os vínculos e as posições permanecem iguais. Transferir para a turma atual também não movimenta o estudante.
+- **Sessão:** operações concluídas conservam os vínculos enquanto a página estiver aberta. **Reiniciar turmas** restaura os três estudantes na turma A. Voltar pelo histórico revisa snapshots; não desfaz a sessão. Recarregar a página restaura o estado inicial. Salvar configuração conserva apenas as preferências.
+- **Inspetor:** as abas **Relações**, **HTTP**, **Código**, **SQL**, **Estado**, **Histórico** e **Contexto/Objetivo** explicam o vínculo visual, a chave estrangeira e os dois lados do relacionamento. O contexto apresenta os pré-requisitos em linguagem iniciante. O quiz tem 8 questões, exige reprodução completa, apresenta parabéns a partir de 75% e orienta a revisão conforme os erros.
+
+A API didática usa `GET /api/school/relationships/state` e `POST /api/school/relationships/simulations`. O catálogo escolar identifica o cenário como `school-relationships`. Java, JPA e SQL são exemplos ilustrativos; os estados são calculados em memória, sem banco real. Uma sequência calculada retorna HTTP `200` na API, enquanto seu resultado didático fica em `simulatedResponse`.
+
+### Backend · Transações com @Transactional
+
+Abra **Backend → Transações com @Transactional** (`/modulos/backend/transacoes`). A aula reutiliza as duas salas, os três estudantes, o professor e a secretária com os sprites sentados atrás das mesas e os balões acompanhando quem fala. Escolha Bruno, Júlio ou Carlos para uma transferência da turma A para B.
+
+A operação reúne **duas escritas no mesmo banco**: atualizar `alunos.turma_id` e inserir uma linha em `transferencias`. O inspetor **Transação** separa os registros confirmados da área de trabalho pendente. Um `saveAndFlush` pode enviar o SQL sem confirmar a transação; a posição do aluno acompanha apenas os dados confirmados.
+
+| Condição em Falhas | Resultado representado |
+| --- | --- |
+| Funcionamento normal | UPDATE e INSERT ficam pendentes; o commit confirma os dois, depois o estudante caminha para B. HTTP didático 200. |
+| Falha ao registrar histórico | A primeira escrita fica pendente e a segunda lança uma RuntimeException não suprimida. O rollback descarta as alterações: aluno em A e nenhuma transferência confirmada. HTTP didático 500. |
+| Secretaria indisponível | O fluxo para na consulta, antes de qualquer escrita; a transação é encerrada sem confirmação. HTTP didático 503. |
+
+Cada execução começa novamente com os três alunos em A e o histórico vazio, sem compartilhar a sessão da aula de relacionamentos. **Reiniciar exemplo** limpa a reprodução; **Salvar configuração** conserva apenas preferências em `nara-lab.school.transactions.settings.v1`.
+
+As abas **Transação**, **HTTP**, **Código**, **SQL**, **Estado**, **Histórico** e **Contexto/Objetivo** permitem comparar os retratos de cada etapa. Contexto/Objetivo explica os termos e pré-requisitos em linguagem iniciante. O quiz ao lado do título tem oito questões, exige reprodução completa, parabeniza a partir de 75% e recomenda revisão por assunto conforme os erros. Saltar ao final não libera o quiz.
+
+API: `GET /api/school/transactions/state` e `POST /api/school/transactions/simulations`, com `{ "studentId": 3, "failure": "none" }`. As falhas aceitas são `none`, `history-write-failed` e `database-unavailable`. Configuração inválida gera HTTP 400 real; aluno positivo inexistente gera 404 didático. O catálogo escolar inclui `school-transactions`. Sequências calculadas retornam HTTP 200 real, com o resultado didático em `simulatedResponse`.
+
+**Limites didáticos:** o simulador calcula snapshots sem banco ou transação reais. O código pressupõe um Service gerenciado pelo Spring, chamado por seu proxy, com infraestrutura transacional configurada e repositórios no mesmo banco. A falha usada é uma RuntimeException; checked exceptions podem precisar de regras específicas de rollback. Um status HTTP de erro sozinho não desfaz dados. E-mails ou outras ações externas não são desfeitos automaticamente. Isolamento, propagação e concorrência ficam para aulas posteriores. Referência: [documentação oficial de @Transactional](https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html).
+
+### Backend · Inicialização e injeção de dependência
+
+Abra **Backend → Inicialização e injeção de dependência** (`/modulos/backend/inicializacao-spring`). A lanchonete é uma ampliação da arte usada na IA, com duas mesas adicionais e corredores livres. A arte original da IA não muda. Cada uma das duas mesas de configuração representa uma aplicação independente, executada uma por vez.
+
+| Configuração | Recursos ilustrados |
+| --- | --- |
+| Mesa 1 · Combo simples | Página Pedidos ilustrativa, API HTTP `GET /api/pedidos`, porta 8081 e implementação Repository com lista em memória. Biblioteca Web. |
+| Mesa 2 · Combo completo | Página Pedidos ilustrativa, API HTTP, porta 8082, validação disponível, JPA e H2 em memória. Bibliotecas Web, Validation, Data JPA e driver H2. |
+
+O formulário permite escolher ponto do hambúrguer, salada, acompanhamento e bebida. Os clientes usam poses próprias de restaurante, sem caderno ou lapiseira. Na entrega, o hambúrguer, o acompanhamento escolhido e a bebida aparecem sobre a mesa; ao revisar etapas anteriores, o lanche da mesa ativa desaparece. Os funcionários da cozinha têm a mesma escala dos demais personagens em pé e ficam no piso livre à frente das bancadas, com o corpo inteiro visível. Os clientes ficam centralizados nos assentos. Os balões permanecem por pelo menos 6,5 segundos, com mínimo de 16 segundos para o pedido inicial e tempo adicional proporcional ao número de palavras, na velocidade padrão. O **texto exato do pedido** retornado pela API aparece no balão do cliente, no papel da comanda e no histórico. O lanche pertence à narrativa; os recursos técnicos são definidos pelo combo. A comanda completa inclui página, rota HTTP, porta, bibliotecas, propriedades do banco e componentes escritos pelo desenvolvedor.
+
+- O cliente representa o desenvolvedor durante a configuração. O garçom representa o contêiner Spring. Todos os participantes já estão presentes na cena. A criação e a conexão dos objetos são acompanhadas nas etapas e no inspetor Componentes; a presença física de um personagem não indica que seu bean já esteja pronto.
+- A aula distingue biblioteca disponível no projeto de colaborador recebido pelo construtor. Spring não escreve as regras de negócio nem cria a página HTML ao adicionar starters.
+- Após montar os componentes, a aplicação fica pronta e uma consulta HTTP ilustrativa retorna dados para a prévia da página **Pedidos**. Só depois aparece a **ficha de entrega**, com resumo exato, recursos, objetos conectados e propriedades utilizadas. A entrega também é registrada em papel no histórico da execução.
+- **Repository não registrado** interrompe as duas configurações. **Banco inválido** só pode ser escolhido no combo completo, e a URL incorreta aparece na comanda. A aplicação ilustrada não inicia, não produz entrega e não oferece resposta HTTP de teste; isso não representa um HTTP 500 enviado por um servidor que não iniciou.
+- As mesas conservam o último resultado apenas durante a visita. **Reiniciar mesas** limpa as execuções; **Salvar configuração** conserva preferências em `nara-lab.backend.boot.settings.v1`. Cada montagem começa independente e não altera a outra aplicação.
+- Inspetor: **Comanda**, **Entrega**, **Componentes**, **HTTP / Página**, **Código**, **Estado**, **Histórico**, **Contexto/Objetivo**. Os documentos e a lista de beans acompanham o snapshot selecionado, inclusive ao retroceder. Quiz de 8 questões, reprodução completa obrigatória, meta de 75% e revisão orientada pelos erros.
+
+Exemplo de chamada: `POST /api/boot/simulations`, com `{ "profile": "complete", "food": { "meatPoint": "ao ponto", "salad": true, "accompaniment": "batata frita", "drink": "refrigerante" }, "failure": "none" }`. `profile` aceita `simple`/`complete`; falhas: `none`, `missing-repository`, `invalid-database`. `GET /api/boot/scenarios` lista `boot-restaurant` e as duas configurações. A API retorna HTTP 200 para sequências calculadas, inclusive falhas didáticas; o resultado de inicialização fica em `startupResult`. Configurações inválidas geram HTTP 400 real.
+
+**Limites:** exemplos de dependências do Spring Boot 3.5; nenhuma biblioteca é baixada, aplicação adicional iniciada, porta aberta, página gerada ou banco criado. H2 e lista são voláteis; o H2 com `create-drop`, usuário `sa` e senha vazia é somente um exemplo local. A cena mostra uma ordem lógica simplificada de montagem, não todos os eventos internos do Spring. Referências: [Beans e injeção de dependência](https://docs.spring.io/spring-boot/3.5/reference/using/spring-beans-and-dependency-injection.html) e [bancos SQL](https://docs.spring.io/spring-boot/3.5/reference/data/sql.html).
+
 ### Inteligência Artificial
 
 - **Biblioteca**. Um integrante da equipe pergunta qual status o cadastro simula quando o banco fica indisponível. O assistente consulta a documentação e mostra a evidência. A opção de fonte indisponível demonstra como comunicar que o status ainda não pôde ser confirmado.
@@ -195,7 +252,7 @@ npm ci
 npm run dev
 ~~~
 
-Acesse [NARA Lab em localhost:3000](http://localhost:3000), abra **Acessar módulos** e escolha **Backend** para ver as cinco simulações ou **Inteligência Artificial** para os cenários de IA. O Next.js encaminha as chamadas da API para o Spring em `http://127.0.0.1:8080` por padrão. Para outro endereço, defina a variável `SPRING_API_URL` no frontend.
+Acesse [NARA Lab em localhost:3000](http://localhost:3000), abra **Acessar módulos** e escolha **Backend** para ver as oito simulações ou **Inteligência Artificial** para os cenários de IA. O Next.js encaminha as chamadas da API para o Spring em `http://127.0.0.1:8080` por padrão. Para outro endereço, defina a variável `SPRING_API_URL` no frontend.
 
 Para verificar o projeto, execute `mvn test` em `backend/` e `npm run build` em `frontend/`.
 
@@ -244,6 +301,6 @@ O catálogo já exibe as áreas abaixo. Os conteúdos indicados são propostas i
 | DevOps | Simular as etapas de build, teste e entrega de uma aplicação |
 | Metodologias Ágeis | Acompanhar um fluxo Kanban, com limites de trabalho em andamento e bloqueios |
 
-No Backend, a evolução prevista inclui relacionamentos entre entidades, transações e inicialização do Spring. Em Inteligência Artificial, as próximas demonstrações aprofundarão agentes, ferramentas, skills e harness. Consulte o [contexto técnico do NARA Lab](context.md) para o contrato da API, a lógica de reprodução e o inventário dos sprites.
+No Backend, os fundamentos atuais incluem inicialização, injeção de dependência, CRUD, DTO, validação, persistência, relacionamentos e transações. Os próximos aprofundamentos serão definidos conforme a evolução da trilha. Em Inteligência Artificial, as próximas demonstrações aprofundarão agentes, ferramentas, skills e harness. Consulte o [contexto técnico do NARA Lab](context.md) para o contrato da API, a lógica de reprodução e o inventário dos sprites.
 
 As próximas simulações, inclusive em outros módulos, seguirão o padrão de animações com movimento reduzido, legendas iniciante/técnica, histórico explicativo, Contexto/Objetivo, inspetor pertinente ao tema e quiz de 6 a 12 questões com liberação após a visualização, meta de 75% e revisão orientada pelos erros. Esses recursos de contexto e quiz estão implementados atualmente no Backend; os cenários de IA existentes ainda não foram migrados.

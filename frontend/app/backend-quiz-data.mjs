@@ -1,7 +1,13 @@
 import { validationQuiz } from './school-validation-content.mjs';
 import { jpaQuiz } from './school-jpa-content.mjs';
+import { relationshipQuiz } from './school-relationship-content.mjs';
+import { transactionQuiz } from './school-transaction-content.mjs';
+import { bootQuiz } from './boot-content.mjs';
 
 export const backendQuizzes = {
+  boot: bootQuiz,
+  transactions: transactionQuiz,
+  relationships: relationshipQuiz,
   jpa: jpaQuiz,
   validation: validationQuiz,
   products: [

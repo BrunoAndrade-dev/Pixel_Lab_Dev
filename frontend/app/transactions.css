@@ -1,0 +1,11 @@
+.transaction-status { display: inline-block; max-width: 100%; padding: 7px 12px; border: 1px solid #d9c59e; border-radius: 999px; color: #654823; background: #fff8e9; font-size: .78rem; font-weight: 700; line-height: 1.4; }
+.transaction-status.is-active { background: #fff1cc; border-color: #bd8b34; }
+.transaction-status.is-committed { background: #edf5e9; border-color: #8caa7a; color: #385526; }
+.transaction-status.is-rolled_back { background: #fff0e7; border-color: #c38e72; color: #793e27; }
+.transaction-stage-status { padding: 10px 20px; background: #fffcf5; }
+.transaction-comparison { margin-top: 20px; }
+.transaction-comparison > section { min-width: 0; padding: 18px; border: 1px solid #e6dfd1; border-radius: 12px; }
+.transaction-comparison > section > p, .transaction-inspector > p { font-size: .88rem; line-height: 1.7; }
+.transaction-working { background: #fffaf0; }
+.transaction-comparison h4 { margin: 24px 0 12px; font-size: .9rem; }
+.transaction-empty { padding: 12px; border: 1px dashed #d7c7aa; border-radius: 8px; color: #756348; font-size: .85rem; }

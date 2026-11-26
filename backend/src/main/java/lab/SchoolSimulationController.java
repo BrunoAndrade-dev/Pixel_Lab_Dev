@@ -81,7 +81,11 @@ public class SchoolSimulationController {
             new SchoolScenario("school-validation", "Validação e tratamento de erros",
                 "Valide campos e acompanhe a tradução de exceções em respostas HTTP compreensíveis."),
             new SchoolScenario("school-jpa", "Persistência com Spring Data JPA",
-                "Grave uma nota na tabela e consulte o mesmo registro em uma nova sessão."));
+                "Grave uma nota na tabela e consulte o mesmo registro em uma nova sessão."),
+            new SchoolScenario("school-relationships", "Relacionamentos entre entidades",
+                "Consulte os alunos das turmas e acompanhe a transferência entre duas salas."),
+            new SchoolScenario("school-transactions", "Transações com @Transactional",
+                "Confirme a turma e o histórico juntos ou desfaça a transferência com rollback."));
     }
 
     @PostMapping("/simulations")
